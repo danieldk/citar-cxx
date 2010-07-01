@@ -97,7 +97,7 @@ shared_ptr<NGrams> Model::readNGrams(std::istream &lexiconStream)
 				nGrams->tagNumbers[lineItems[2]])] +=
 				freq;
 		else
-			cout << "Encountered a line which does not contain a uni/bi/trigram!" << endl;
+			cerr << "Encountered a line which does not contain a uni/bi/trigram!" << endl;
 	}
 
 	return nGrams;
