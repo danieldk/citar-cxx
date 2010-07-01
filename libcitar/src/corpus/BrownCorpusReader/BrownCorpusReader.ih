@@ -1,0 +1,15 @@
+#include <algorithm>
+#include <cctype>
+#include <istream>
+#include <iterator>
+#include <sstream>
+#include <string>
+#include <vector>
+
+#include <tr1/memory>
+
+#include <citar/corpus/BrownCorpusReader.hh>
+
+using namespace std;
+using namespace std::tr1;
+using namespace citar::corpus;
