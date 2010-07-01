@@ -1,0 +1,67 @@
+Citar - A simple Trigram HMM part-of-speech tagger
+
+== Introduction ==
+
+Citar is a simple part-of-speech tagger, based on a trigram Hidden
+Markov Model (HMM). It (partly) implements the ideas set forth in
+[1]. Citar is written in C++.
+
+http://code.google.com/p/jitar/
+
+Citar is licensed under the GNU Lesser General Public License
+version 3.0.
+
+== Warning ==
+
+The Citar API will be highly unstable for the first few versions!
+
+== Building Citar ==
+
+Builing Citar requires a C++ standard library with TR1 extensions,
+such as a recent version of libstdc++ as included with GNU g++. This
+release was tested with g++ 4.3.2. cmake is used for creating build
+infrastructure.
+
+You can create the build infrastructure by running "ccmake ." in the
+top-level Citar directory. This will allow you to configure various
+settings. The WITH_TRIGRAM_CACHE setting is used to enable/disable the
+trigram cache for linear interpolation smoothing. This may give a
+performance gain in some situations, but is currently not thread-safe.
+
+After configuring Citar with cmake you can invoke "make" on Unix
+systems to build Citar. Command-line utilities for training and
+evaluating the tagger will be produced. Compilation will also produce
+the 'libsitar.a' library, which you can use to integrate the tagger in
+your own programs.
+
+== Training ==
+
+The language model and lexicon can be created with the 'train' utility:
+
+---
+$ ./train corpus-train lexicon ngrams
+---
+
+This will create the 'lexicon' and 'ngrams' files. The trainer will read
+corpora in the Brown format (one sentence per line, words and tags are
+separated with a forward slash). You can now test the tagger with the
+command-line 'tag' utility, which reads tokenized sentences from the
+standard input and prints the most probable tag sequence:
+
+---
+$ echo "The cat is on the mat ." | ./tag lexicon ngrams
+The/AT cat/NN is/BEZ on/IN the/AT mat/NN ./.
+---
+
+== Authors ==
+
+Daniel de Kok <me@danieldk.eu>
+
+== FAQ ==
+
+- "What's up with the name?"
+
+  Citar, it is not an abbreviation. If you do prefer abbreviations,
+  let's make it "C++ sImple TAgging Redux" :).
+
+[1] TnT - a statistical part-of-speech tagger, Thorsten Brants, 2000
