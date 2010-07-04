@@ -12,15 +12,19 @@ citar_tagger *citar_tagger_new(char const *lexicon, char const *ngrams)
   if (!lexiconStream.good())
     return 0;
 
-  shared_ptr<Model> model(Model::readModel(lexiconStream, nGramStream));
-
   citar_tagger *ctagger = new citar_tagger;
-  ctagger->unknownWordHandler = new SuffixWordHandler(model, 2, 2, 8);
-  ctagger->knownWordHandler =
-    new KnownWordHandler(model, ctagger->unknownWordHandler);
-  ctagger->smoother = new LinearInterpolationSmoothing(model);
-  ctagger->tagger =
-    new HMMTagger(model, ctagger->knownWordHandler, ctagger->smoother);
+
+  try {
+    shared_ptr<Model> model(Model::readModel(lexiconStream, nGramStream));
+    ctagger->unknownWordHandler = new SuffixWordHandler(model, 2, 2, 8);
+    ctagger->knownWordHandler =
+      new KnownWordHandler(model, ctagger->unknownWordHandler);
+    ctagger->smoother = new LinearInterpolationSmoothing(model);
+    ctagger->tagger =
+      new HMMTagger(model, ctagger->knownWordHandler, ctagger->smoother);
+  } catch (...) {
+    return 0;
+  }
 
   return ctagger;
 }
