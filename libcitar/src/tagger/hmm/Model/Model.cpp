@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Daniel de Kok
+ * Copyright 2008-2010 Daniel de Kok
  *
  * This file is part of citar.
  *
@@ -34,6 +34,9 @@ shared_ptr<WordTagFreqs> Model::readLexicon(
 		vector<string> lineItems;
 		copy(istream_iterator<string>(lineStream), istream_iterator<string>(),
 			back_inserter(lineItems));
+
+		if (lineItems.size() == 0 || (lineItems.size() - 1) % 2 != 0)
+		  throw runtime_error(string("Invalid lexicon entry: ") + line);
 
 		string word = lineItems[0];
 
@@ -72,6 +75,9 @@ shared_ptr<NGrams> Model::readNGrams(std::istream &lexiconStream)
 		// Read line items.
 		vector<string> lineItems;
 		copy(istream_iterator<string>(lineStream), istream_iterator<string>(), back_inserter(lineItems));
+
+		if (lineItems.size() < 2 || lineItems.size() > 4)
+		  throw runtime_error(string("Invalid ngram model entry: ") + line);
 
 		// Get frequency.
 		istringstream freqStream(lineItems[lineItems.size() - 1]);
