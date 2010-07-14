@@ -1,31 +1,29 @@
 /*
  * Copyright 2008 Daniel de Kok
  *
- * This file is part of citar.
+ * This file is part of Citar.
  *
- * Citar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * Citar is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with Citar.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #ifndef CITAR_LINEARINTERPOLATIONSMOOTHING
 #define CITAR_LINEARINTERPOLATIONSMOOTHING
 
-#include <string>
-
-#include <tr1/memory>
-#include <tr1/unordered_map>
-
-#include <citar/config.hh>
+#include <QHash>
+#include <QReadWriteLock>
+#include <QSharedPointer>
 
 #include "BiGram.hh"
 #include "Model.hh"
@@ -43,9 +41,9 @@ namespace tagger {
 class LinearInterpolationSmoothing : public Smoothing
 {
 public:
-	typedef std::tr1::unordered_map<TriGram, double, TriGramHash> TriGramProbs;
+	typedef QHash<TriGram, double> TriGramProbs;
 
-	LinearInterpolationSmoothing(std::tr1::shared_ptr<Model const> model);
+	LinearInterpolationSmoothing(QSharedPointer<Model const> model);
 	LinearInterpolationSmoothing(LinearInterpolationSmoothing const &other);
 	LinearInterpolationSmoothing &operator=(
 		LinearInterpolationSmoothing const &other);
@@ -59,11 +57,12 @@ private:
 	void calculateCorpusSize();
 	void calculateLambdas();
 
-	std::tr1::shared_ptr<UniGramFreqs> d_uniGrams;
-	std::tr1::shared_ptr<BiGramFreqs> d_biGrams;
-	std::tr1::shared_ptr<TriGramFreqs> d_triGrams;
+	QSharedPointer<UniGramFreqs> d_uniGrams;
+	QSharedPointer<BiGramFreqs> d_biGrams;
+	QSharedPointer<TriGramFreqs> d_triGrams;
 #ifdef WITH_TRIGRAM_CACHE
-	std::tr1::shared_ptr<TriGramProbs> d_triGramCache;
+	QSharedPointer<TriGramProbs> d_triGramCache;
+	QSharedPointer<QReadWriteLock> d_trigramCacheLock;
 #endif
 	size_t d_corpusSize;
 	double d_l1;
@@ -72,7 +71,7 @@ private:
 };
 
 inline LinearInterpolationSmoothing::LinearInterpolationSmoothing(
-	LinearInterpolationSmoothing const &other)
+	LinearInterpolationSmoothing const &other) : Smoothing()
 {
 	copy(other);
 }

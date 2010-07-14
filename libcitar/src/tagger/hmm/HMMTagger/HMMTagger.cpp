@@ -1,33 +1,34 @@
 /*
  * Copyright 2008 Daniel de Kok
  *
- * This file is part of citar.
+ * This file is part of Citar.
  *
- * Citar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * Citar is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with Citar.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include "HMMTagger.ih"
 
-vector<string> HMMTagger::tag(vector<string> const &sentence) const
+QVector<QString> HMMTagger::tag(QVector<QString> const &sentence) const
 {
-	vector<vector<TagMatrixEntry> > tagMatrix(sentence.size(), vector<TagMatrixEntry>());
+	QVector<QVector<TagMatrixEntry> > tagMatrix(sentence.size(), QVector<TagMatrixEntry>());
 
 	// We can't estimate the trigram probabilities for the first two tags,
 	// so add them to the tag matrix as-is. Normally, these are start markers
 	// anyway. XXX - maybe we should at the very least look them up in the
 	// lexicon?
-	size_t startTag = d_model->tagNumbers().find(sentence[0])->second;
+	size_t startTag = d_model->tagNumbers().find(sentence[0]).value();
 	tagMatrix[0].push_back(TagMatrixEntry(startTag));
 	tagMatrix[1].push_back(TagMatrixEntry(startTag));
 	tagMatrix[1][0].probs[&tagMatrix[0][0]] = 0.0;
@@ -36,7 +37,7 @@ vector<string> HMMTagger::tag(vector<string> const &sentence) const
 	double beam = 0.0;
 
 	// Loop through the tokens.
-	for (size_t i = 2; i < sentence.size(); ++i)
+	for (int i = 2; i < sentence.size(); ++i)
 	{
 		double columnHighestProb = -numeric_limits<double>::infinity();
 		WordHandler::ProbSet tagProbs = d_wordHandler->tags(sentence[i]);
@@ -48,32 +49,32 @@ vector<string> HMMTagger::tag(vector<string> const &sentence) const
 			TagMatrixEntry newEntry(tagProbsIter->first);
 
 			// Loop over all possible trigrams.
-			for (vector<TagMatrixEntry>::const_iterator t2Iter =
+			for (QVector<TagMatrixEntry>::const_iterator t2Iter =
 				tagMatrix[i - 1].begin(); t2Iter != tagMatrix[i - 1].end();
 				++t2Iter)
 			{
 				double highestProb = -numeric_limits<double>::infinity();
 				TagMatrixEntry const *highestProbBp = 0;
 
-				for (unordered_map<TagMatrixEntry const *, double>::const_iterator t1Iter =
+				for (QHash<TagMatrixEntry const *, double>::const_iterator t1Iter =
 					t2Iter->probs.begin(); t1Iter != t2Iter->probs.end(); ++t1Iter)
 				{
-					if (t1Iter->second < beam)
+					if (t1Iter.value() < beam)
 						continue;
 
-					TriGram curTriGram(t1Iter->first->tag, t2Iter->tag, tagProbsIter->first);
+					TriGram curTriGram(t1Iter.key()->tag, t2Iter->tag, tagProbsIter->first);
 					double triGramProb = d_smoothing->triGramProb(curTriGram);
 
 					// The probability of the current state is P(w|t) * p(t3|t1,t2) *
 					// p(prev_state).
-					double prob = triGramProb + tagProbsIter->second + t1Iter->second;
+					double prob = triGramProb + tagProbsIter->second + t1Iter.value();
 
 					// Store the path the maximizes the probability.
 					if (prob > highestProb)
 					{
 						highestProb = prob;
 						//highestProbBp = t2Iter->bps.find(t1Iter->first)->second;
-						highestProbBp = t1Iter->first;
+						highestProbBp = t1Iter.key();
 					}
 				}
 
@@ -96,31 +97,31 @@ vector<string> HMMTagger::tag(vector<string> const &sentence) const
 	TagMatrixEntry const *tail = 0;
 	TagMatrixEntry const *beforeTail = 0;
 
-	vector<TagMatrixEntry> &lastColumn = tagMatrix[sentence.size() - 1];
+	QVector<TagMatrixEntry> &lastColumn = tagMatrix[sentence.size() - 1];
 
-	for (vector<TagMatrixEntry>::const_iterator iter = lastColumn.begin();
+	for (QVector<TagMatrixEntry>::const_iterator iter = lastColumn.begin();
 			iter != lastColumn.end(); ++iter)
-		for (unordered_map<TagMatrixEntry const *, double>::const_iterator probIter =
+		for (QHash<TagMatrixEntry const *, double>::const_iterator probIter =
 			iter->probs.begin(); probIter != iter->probs.end(); ++probIter)
 		{
-			if (probIter->second > highestProb)
+			if (probIter.value() > highestProb)
 			{
-				highestProb = probIter->second;
+				highestProb = probIter.value();
 				tail = &(*iter);
-				beforeTail = probIter->first;
+				beforeTail = probIter.key();
 			}
 		}
 
 	// Extract the most probable tag sequence.
-	vector<string> tagSequence;
+	QVector<QString> tagSequence;
 	for (int i = tagMatrix.size() - 1; i >= 0; --i)
 	{
-		string tagString = d_model->numberTags().find(tail->tag)->second;
+		QString tagString = d_model->numberTags().find(tail->tag).value();
 		tagSequence.push_back(tagString);
 
 		if (beforeTail)
 		{
-			TagMatrixEntry const *tmp = tail->bps.find(beforeTail)->second;
+			TagMatrixEntry const *tmp = tail->bps.find(beforeTail).value();
 			tail = beforeTail;
 			beforeTail = tmp;
 		}

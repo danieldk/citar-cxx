@@ -1,65 +1,69 @@
 /*
  * Copyright 2008 Daniel de Kok
  *
- * This file is part of citar.
+ * This file is part of Citar.
  *
- * Citar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * Citar is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with Citar.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include <algorithm>
-#include <fstream>
 #include <iostream>
 #include <iterator>
 #include <map>
-#include <vector>
 
-#include <tr1/memory>
-#include <tr1/unordered_map>
+#include <QCoreApplication>
+#include <QFile>
+#include <QHash>
+#include <QSharedPointer>
+#include <QString>
+#include <QTextCodec>
+#include <QTextStream>
+#include <QVector>
 
 #include <citar/corpus/BrownCorpusReader.hh>
 #include <citar/corpus/SentenceHandler.hh>
 #include <citar/tagger/hmm/Model.hh>
 
 using namespace std;
-using namespace std::tr1;
 using namespace citar::corpus;
 using namespace citar::tagger;
 
-typedef std::tr1::unordered_map<string, map<string, size_t> > Lexicon;
+typedef QHash<QString, map<QString, size_t> > Lexicon;
 
 class TrainHandler : public SentenceHandler
 {
 public:
 	TrainHandler() : d_lexicon(new Lexicon),
-		d_uniGrams(new unordered_map<string, size_t>),
-		d_biGrams(new unordered_map<string, size_t>),
-		d_triGrams(new unordered_map<string, size_t>) {}
-	void handleSentence(vector<TaggedWord> const &sentence);
+		d_uniGrams(new QHash<QString, size_t>),
+		d_biGrams(new QHash<QString, size_t>),
+		d_triGrams(new QHash<QString, size_t>) {}
+	void handleSentence(QVector<TaggedWord> const &sentence);
 	Lexicon const &lexicon();
-	unordered_map<string, size_t> const &biGrams();
-	unordered_map<string, size_t> const &triGrams();
-	unordered_map<string, size_t> const &uniGrams();
+	QHash<QString, size_t> const &biGrams();
+	QHash<QString, size_t> const &triGrams();
+	QHash<QString, size_t> const &uniGrams();
 public:
-	shared_ptr<Lexicon> d_lexicon;
-	shared_ptr<unordered_map<string, size_t> > d_uniGrams;
-	shared_ptr<unordered_map<string, size_t> > d_biGrams;
-	shared_ptr<unordered_map<string, size_t> > d_triGrams;
+	QSharedPointer<Lexicon> d_lexicon;
+	QSharedPointer<QHash<QString, size_t> > d_uniGrams;
+	QSharedPointer<QHash<QString, size_t> > d_biGrams;
+	QSharedPointer<QHash<QString, size_t> > d_triGrams;
 };
 
-void TrainHandler::handleSentence(vector<TaggedWord> const &sentence)
+void TrainHandler::handleSentence(QVector<TaggedWord> const &sentence)
 {
-	for (vector<TaggedWord>::const_iterator iter = sentence.begin();
+	for (QVector<TaggedWord>::const_iterator iter = sentence.begin();
 		iter != sentence.end(); ++iter)
 	{
 		++(*d_uniGrams)[iter->tag];
@@ -81,30 +85,30 @@ inline Lexicon const &TrainHandler::lexicon()
 	return *d_lexicon;
 }
 
-inline unordered_map<string, size_t> const &TrainHandler::biGrams()
+inline QHash<QString, size_t> const &TrainHandler::biGrams()
 {
 	return *d_biGrams;
 }
 
-inline unordered_map<string, size_t> const &TrainHandler::triGrams()
+inline QHash<QString, size_t> const &TrainHandler::triGrams()
 {
 	return *d_triGrams;
 }
 
-inline unordered_map<string, size_t> const &TrainHandler::uniGrams()
+inline QHash<QString, size_t> const &TrainHandler::uniGrams()
 {
 	return *d_uniGrams;
 }
 
-void writeLexicon(ostream &out, Lexicon const &lexicon)
+void writeLexicon(QTextStream &out, Lexicon const &lexicon)
 {
 	for (Lexicon::const_iterator iter = lexicon.begin();
 		iter != lexicon.end(); ++iter)
 	{
-		out << iter->first;
+		out << iter.key();
 
-		for (map<string, size_t>::const_iterator tagIter = iter->second.begin();
-			tagIter != iter->second.end(); ++tagIter)
+		for (map<QString, size_t>::const_iterator tagIter = iter.value().begin();
+			tagIter != iter.value().end(); ++tagIter)
 		{
 			out << " " << tagIter->first << " " << tagIter->second;
 		}
@@ -113,70 +117,74 @@ void writeLexicon(ostream &out, Lexicon const &lexicon)
 	}
 }
 
-void writeNGrams(ostream &out,
-		unordered_map<string, size_t> const &uniGrams,
-		unordered_map<string, size_t> const &biGrams,
-		unordered_map<string, size_t> const &triGrams)
+void writeNGrams(QTextStream &out,
+		QHash<QString, size_t> const &uniGrams,
+		QHash<QString, size_t> const &biGrams,
+		QHash<QString, size_t> const &triGrams)
 {
-	for (unordered_map<string, size_t>::const_iterator iter = uniGrams.begin();
+	for (QHash<QString, size_t>::const_iterator iter = uniGrams.begin();
 			iter != uniGrams.end(); ++iter)
-		out << iter->first << " " << iter->second << endl;
+		out << iter.key() << " " << iter.value() << endl;
 
-	for (unordered_map<string, size_t>::const_iterator iter = biGrams.begin();
+	for (QHash<QString, size_t>::const_iterator iter = biGrams.begin();
 			iter != biGrams.end(); ++iter)
 	{
-		string biGram = iter->first;
-		out << biGram << " " << iter->second << endl;
+		QString biGram = iter.key();
+		out << biGram << " " << iter.value() << endl;
 	}
 
-	for (unordered_map<string, size_t>::const_iterator iter = triGrams.begin();
+	for (QHash<QString, size_t>::const_iterator iter = triGrams.begin();
 			iter != triGrams.end(); ++iter)
 	{
-		string triGram = iter->first;
-		out << triGram << " " << iter->second << endl;
+		QString triGram = iter.key();
+		out << triGram << " " << iter.value() << endl;
 	}
 }
 
 int main(int argc, char *argv[])
 {
+	QCoreApplication app(argc, argv);
+
 	if (argc != 4)
 	{
-		cerr << "Usage: " << argv[0] << "corpus lexicon ngrams" << endl;
+		cerr << "Usage: " << argv[0] << " corpus lexicon ngrams" << endl;
 		return 1;
 	}
 
-	vector<TaggedWord> startTags(2, TaggedWord("<START>", "<START>"));
-	vector<TaggedWord> endTags(1, TaggedWord("<END>", "<END>"));
+	QVector<TaggedWord> startTags(2, TaggedWord("<START>", "<START>"));
+	QVector<TaggedWord> endTags(1, TaggedWord("<END>", "<END>"));
 	BrownCorpusReader brownCorpusReader(startTags, endTags, true);
 
-	shared_ptr<TrainHandler> trainHandler(new TrainHandler);
+	QSharedPointer<TrainHandler> trainHandler(new TrainHandler);
 	brownCorpusReader.addSentenceHandler(trainHandler);
 
-	ifstream corpusStream(argv[1]);
-	if (!corpusStream.good())
+	QFile corpusFile(argv[1]);
+	if (!corpusFile.open(QFile::ReadOnly))
 	{
 		cerr << "Could not open corpus for reading: " << argv[1] << endl;
 		return 1;
 	}
+	QTextStream corpusStream(&corpusFile);
 
 	brownCorpusReader.parse(corpusStream);
 
-	ofstream lexiconStream(argv[2]);
-	if (!lexiconStream.good())
+	QFile lexiconFile(argv[2]);
+	if (!lexiconFile.open(QFile::WriteOnly))
 	{
 		cerr << "Could not open lexicon for writing: " << argv[2] << endl;
 		return 1;
 	}
+	QTextStream lexiconStream(&lexiconFile);
 
-	ofstream ngramStream(argv[3]);
-	if (!ngramStream.good())
+	writeLexicon(lexiconStream, trainHandler->lexicon());
+
+	QFile ngramFile(argv[3]);
+	if (!ngramFile.open(QFile::WriteOnly))
 	{
 		cerr << "Could not open ngram list for writing: " << argv[3] << endl;
 		return 1;
 	}
-
-
-	writeLexicon(lexiconStream, trainHandler->lexicon());
+	QTextStream ngramStream(&ngramFile);
 
 	writeNGrams(ngramStream, trainHandler->uniGrams(), trainHandler->biGrams(),
 		trainHandler->triGrams());

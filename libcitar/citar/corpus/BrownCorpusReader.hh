@@ -1,28 +1,29 @@
 /*
  * Copyright 2008 Daniel de Kok
  *
- * This file is part of citar.
+ * This file is part of Citar.
  *
- * Citar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * Citar is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with Citar.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #ifndef CITAR_BROWNCORPUSREADER_HH
 #define CITAR_BROWNCORPUSREADER_HH
 
-#include <istream>
-#include <string>
-#include <vector>
+#include <QString>
+#include <QTextStream>
+#include <QVector>
 
 #include "CorpusReader.hh"
 #include "TaggedWord.hh"
@@ -33,15 +34,15 @@ namespace corpus {
 class BrownCorpusReader : public CorpusReader
 {
 public:
-	BrownCorpusReader(std::vector<TaggedWord> const &startMarkers,
-		std::vector<TaggedWord> const &endMarkers,
+	BrownCorpusReader(QVector<TaggedWord> const &startMarkers,
+		QVector<TaggedWord> const &endMarkers,
 		bool decapitalizeFirstWord = false) :
 		CorpusReader(startMarkers, endMarkers, decapitalizeFirstWord) {}
-	void parse(std::istream &in);
+	void parse(QTextStream &in);
 private:
 	BrownCorpusReader(BrownCorpusReader const &other);
 	BrownCorpusReader &operator=(BrownCorpusReader const &other);
-	std::vector<TaggedWord> parseLine(std::string const &line) const;
+	QVector<TaggedWord> parseLine(QString const &line) const;
 };
 
 }

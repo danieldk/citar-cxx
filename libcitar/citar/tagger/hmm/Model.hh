@@ -1,31 +1,32 @@
 /*
  * Copyright 2008 Daniel de Kok
  *
- * This file is part of citar.
+ * This file is part of Citar.
  *
- * Citar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * Citar is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with Citar.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #ifndef CITAR_MODEL_HH
 #define CITAR_MODEL_HH
 
-#include <iostream>
 #include <map>
-#include <string>
 
-#include <tr1/memory>
-#include <tr1/unordered_map>
+#include <QHash>
+#include <QSharedPointer>
+#include <QString>
+#include <QTextStream>
 
 #include "BiGram.hh"
 #include "TriGram.hh"
@@ -35,13 +36,12 @@
 namespace citar {
 namespace tagger {
 
-typedef std::tr1::unordered_map<std::string, std::map<size_t, size_t> >
-	WordTagFreqs;
+typedef QHash<QString, std::map<size_t, size_t> > WordTagFreqs;
 
 struct NGrams
 {
-	std::tr1::unordered_map<std::string, size_t> tagNumbers;
-	std::tr1::unordered_map<size_t, std::string> numberTags;
+	QHash<QString, size_t> tagNumbers;
+	QHash<size_t, QString> numberTags;
 	UniGramFreqs uniGrams;
 	BiGramFreqs biGrams;
 	TriGramFreqs triGrams;
@@ -57,7 +57,7 @@ class Model
 public:
 	BiGramFreqs const &biGrams() const;
 	WordTagFreqs const &lexicon() const;
-	std::tr1::unordered_map<size_t, std::string> const &numberTags() const;
+	QHash<size_t, QString> const &numberTags() const;
 
 	/**
 	 * Read the model from input streams. An input stream for the lexicon, and
@@ -84,27 +84,27 @@ public:
 	 * WPO VBD 5
 	 * </pre>
 	 */
-	static std::tr1::shared_ptr<Model> readModel(std::istream &lexiconStream,
-		std::istream &nGramStream);
+	static QSharedPointer<Model> readModel(QTextStream &lexiconStream,
+		QTextStream &nGramStream);
 
-	std::tr1::unordered_map<std::string, size_t> const &tagNumbers() const;
+	QHash<QString, size_t> const &tagNumbers() const;
 
 	TriGramFreqs const &triGrams() const;
 
 	UniGramFreqs const &uniGrams() const;
 private:
-	Model(std::tr1::shared_ptr<WordTagFreqs> lexicon,
-		std::tr1::shared_ptr<NGrams> nGrams) :
+	Model(QSharedPointer<WordTagFreqs> lexicon,
+		QSharedPointer<NGrams> nGrams) :
 		d_lexicon(lexicon), d_nGrams(nGrams) {}
 	Model(Model const &other);
 	Model &operator=(Model const &other);
-	static std::tr1::shared_ptr<WordTagFreqs>
-		readLexicon(std::istream &lexiconStream,
-		std::tr1::unordered_map<std::string, size_t> const &tagNumbers);
-	static std::tr1::shared_ptr<NGrams> readNGrams(std::istream &lexiconStream);
+	static QSharedPointer<WordTagFreqs>
+		readLexicon(QTextStream &lexiconStream,
+		QHash<QString, size_t> const &tagNumbers);
+	static QSharedPointer<NGrams> readNGrams(QTextStream &lexiconStream);
 
-	std::tr1::shared_ptr<WordTagFreqs> d_lexicon;
-	std::tr1::shared_ptr<NGrams> d_nGrams;
+	QSharedPointer<WordTagFreqs> d_lexicon;
+	QSharedPointer<NGrams> d_nGrams;
 };
 
 inline BiGramFreqs const &Model::biGrams() const
@@ -117,12 +117,12 @@ inline WordTagFreqs const &Model::lexicon() const
 	return *d_lexicon;
 }
 
-inline std::tr1::unordered_map<size_t, std::string> const &Model::numberTags() const
+inline QHash<size_t, QString> const &Model::numberTags() const
 {
 	return d_nGrams->numberTags;
 }
 
-inline std::tr1::unordered_map<std::string, size_t> const &Model::tagNumbers() const
+inline QHash<QString, size_t> const &Model::tagNumbers() const
 {
 	return d_nGrams->tagNumbers;
 }
