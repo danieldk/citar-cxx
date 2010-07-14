@@ -6,8 +6,6 @@ Citar is a simple part-of-speech tagger, based on a trigram Hidden
 Markov Model (HMM). It (partly) implements the ideas set forth in
 [1]. Citar is written in C++.
 
-http://code.google.com/p/jitar/
-
 Citar is licensed under the GNU Lesser General Public License
 version 3.0.
 
