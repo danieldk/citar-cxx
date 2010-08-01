@@ -4,18 +4,20 @@ extern "C" {
 
 citar_tagger *citar_tagger_new(char const *lexicon, char const *ngrams)
 {
-  ifstream nGramStream(ngrams);
-  if (!nGramStream.good())
+  QFile ngramsFile(ngrams);
+  if (!ngramsFile.open(QFile::ReadOnly))
     return 0;
+  QTextStream ngramStream(&ngramsFile);
 
-  ifstream lexiconStream(lexicon);
-  if (!lexiconStream.good())
+  QFile lexiconFile(lexicon);
+  if (!lexiconFile.open(QFile::ReadOnly))
     return 0;
+  QTextStream lexiconStream(&lexiconFile);
 
   citar_tagger *ctagger = new citar_tagger;
 
   try {
-    shared_ptr<Model> model(Model::readModel(lexiconStream, nGramStream));
+    QSharedPointer<Model> model(Model::readModel(lexiconStream, ngramStream));
     ctagger->unknownWordHandler = new SuffixWordHandler(model, 2, 2, 8);
     ctagger->knownWordHandler =
       new KnownWordHandler(model, ctagger->unknownWordHandler);
@@ -40,15 +42,17 @@ void citar_tagger_free(citar_tagger *tagger)
 
 char **citar_tagger_tag(citar_tagger *tagger, char const *words[], int len)
 {
-  vector<string> sentence(2, "<START>");
+  QVector<QString> sentence(2, "<START>");
   copy(words, words + len, back_inserter(sentence));
   sentence.push_back("<END>");
 
-  vector<string> tagsV = tagger->tagger->tag(sentence);
+  QVector<QString> tagsV = tagger->tagger->tag(sentence);
 
   char **tags = static_cast<char **>(malloc(len * sizeof(char *)));
-  for (int i = 0; i < len; ++i)
-    tags[i] = strdup(tagsV[i + 2].c_str());
+  for (int i = 0; i < len; ++i) {
+    QByteArray tagsVData(tagsV[i + 2].toUtf8());
+    tags[i] = strdup(tagsVData.constData());
+  }
 
   return tags;
 }
