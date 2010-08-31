@@ -1,0 +1,13 @@
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gemspec|
+    gemspec.name = "citar"
+    gemspec.summary = "Binding for the Citar tagger"
+    gemspec.description = "Binding for the Citar part of speech tagger"
+    gemspec.email = "me@danieldk.eu"
+    gemspec.homepage = "http://github.com/langkit/citar-rb"
+    gemspec.authors = ["Daniel de Kok"]
+  end
+rescue LoadError
+  puts "Jeweler not available. Install it with: gem install jeweler"
+end
