@@ -21,14 +21,14 @@ include_directories (${CITAR_SOURCE_DIR}/include)
 include_directories (${CITAR_BINARY_DIR}/include)
 
 add_library(citar SHARED
-  src/corpus/BrownCorpusReader/BrownCorpusReader.cpp
+  src/corpus/BrownCorpusReader.cpp
   src/cwrap/cwrap.cpp
-  src/tagger/hmm/HMMTagger/HMMTagger.cpp
-  src/tagger/hmm/LinearInterpolationSmoothing/LinearInterpolationSmoothing.cpp
-  src/tagger/hmm/Model/Model.cpp
-  src/tagger/wordhandler/KnownWordHandler/KnownWordHandler.cpp
-  src/tagger/wordhandler/SuffixWordHandler/SuffixWordHandler.cpp
-  src/tagger/wordhandler/WordSuffixTree/WordSuffixTree.cpp
+  src/tagger/hmm/HMMTagger.cpp
+  src/tagger/hmm/LinearInterpolationSmoothing.cpp
+  src/tagger/hmm/Model.cpp
+  src/tagger/wordhandler/KnownWordHandler.cpp
+  src/tagger/wordhandler/SuffixWordHandler.cpp
+  src/tagger/wordhandler/WordSuffixTree.cpp
 )
 
 install(TARGETS citar
