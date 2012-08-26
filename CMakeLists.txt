@@ -15,9 +15,10 @@ endif (NOT TR1_AVAILABLE)
 OPTION (WITH_TRIGRAM_CACHE "Enable trigram caching" OFF)
 
 CONFIGURE_FILE (${CITAR_SOURCE_DIR}/include/citar/config.hh.cmake
-  ${CITAR_SOURCE_DIR}/libcitar/citar/config.hh) 
+  ${CITAR_BINARY_DIR}/include/citar/config.hh) 
 
 include_directories (${CITAR_SOURCE_DIR}/include)
+include_directories (${CITAR_BINARY_DIR}/include)
 
 add_library(citar SHARED
   src/corpus/BrownCorpusReader/BrownCorpusReader.cpp
