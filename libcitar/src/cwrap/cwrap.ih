@@ -1,13 +1,12 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
+#include <fstream>
 #include <iterator>
+#include <string>
+#include <vector>
 
-#include <QByteArray>
-#include <QFile>
-#include <QString>
-#include <QTextStream>
-#include <QVector>
+#include <tr1/memory>
 
 #include <citar/tagger/hmm/Model.hh>
 #include <citar/tagger/hmm/HMMTagger.hh>
