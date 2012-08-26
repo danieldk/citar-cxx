@@ -9,53 +9,32 @@
 #include <tr1/memory>
 
 #include <citar/corpus/BrownCorpusReader.hh>
+#include <citar/corpus/TaggedWord.hh>
 
-using namespace std;
-using namespace std::tr1;
+#include "BrownCorpusReaderPrivate.hh"
+
 using namespace citar::corpus;
+
+BrownCorpusReader::BrownCorpusReader(std::vector<TaggedWord> const &startMarkers,
+		std::vector<TaggedWord> const &endMarkers,
+		bool decapitalizeFirstWord)
+	: d_private(new BrownCorpusReaderPrivate(startMarkers, endMarkers,
+		decapitalizeFirstWord))
+{
+}
+
+BrownCorpusReader::~BrownCorpusReader()
+{
+	delete d_private;
+}
+
+void BrownCorpusReader::addSentenceHandler(std::tr1::shared_ptr<SentenceHandler> sentenceHandler)
+{
+	d_private->addSentenceHandler(sentenceHandler);
+}
 
 
 void BrownCorpusReader::parse(std::istream &in)
 {
-	string line;
-	while (getline(in, line)) {
-		if (line.empty() || line.size() == 0)
-			continue;
-
-		vector<TaggedWord> sentence = parseLine(line);
-		if (d_decapitalizeFirstWord)
-			sentence[0].word[0] = tolower(sentence[0].word[0]);
-
-		// Build a sentence with markers.
-		vector<TaggedWord> markerSentence(d_startMarkers);
-		copy(sentence.begin(), sentence.end(), back_inserter(markerSentence));
-		copy(d_endMarkers.begin(), d_endMarkers.end(), back_inserter(markerSentence));
-
-		// Pass the sentence to all handlers.
-		for (vector<shared_ptr<SentenceHandler> >::iterator iter = d_sentenceHandlers.begin();
-				iter != d_sentenceHandlers.end(); ++iter)
-			(*iter)->handleSentence(markerSentence);
-	}
-}
-
-vector<TaggedWord> BrownCorpusReader::parseLine(std::string const &line) const
-{
-	vector<TaggedWord> sentence;
-
-	istringstream lineStream(line);
-	for (istream_iterator<string> iter(lineStream);
-		iter != istream_iterator<string>(); ++iter)
-	{
-		string wordTag = *iter;
-
-		// Find the word/tag delimiter within the word/tag combination.
-		// Characters before the separator denote the word, characters
-		// after the separator denote the tag.
-		string::size_type sepIndex = wordTag.rfind("/");
-		TaggedWord taggedWord(wordTag.substr(0, sepIndex),
-			wordTag.substr(sepIndex + 1));
-		sentence.push_back(taggedWord);
-	}
-
-	return sentence;
+	d_private->parse(in);
 }

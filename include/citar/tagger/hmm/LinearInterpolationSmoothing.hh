@@ -36,6 +36,8 @@
 namespace citar {
 namespace tagger {
 
+class LinearInterpolationSmoothingPrivate;
+
 /**
  * A class that calculates trigram probabilities using Linear interpolation
  * smoothing.
@@ -46,36 +48,15 @@ public:
 	typedef std::tr1::unordered_map<TriGram, double, TriGramHash> TriGramProbs;
 
 	LinearInterpolationSmoothing(std::tr1::shared_ptr<Model const> model);
-	LinearInterpolationSmoothing(LinearInterpolationSmoothing const &other);
-	LinearInterpolationSmoothing &operator=(
-		LinearInterpolationSmoothing const &other);
+	~LinearInterpolationSmoothing();
 
 	/**
 	 * Calculate the logprob of a trigram.
 	 */
 	double triGramProb(TriGram const &triGram) const;
 private:
-	void copy(LinearInterpolationSmoothing const &other);
-	void calculateCorpusSize();
-	void calculateLambdas();
-
-	std::tr1::shared_ptr<UniGramFreqs> d_uniGrams;
-	std::tr1::shared_ptr<BiGramFreqs> d_biGrams;
-	std::tr1::shared_ptr<TriGramFreqs> d_triGrams;
-#ifdef WITH_TRIGRAM_CACHE
-	std::tr1::shared_ptr<TriGramProbs> d_triGramCache;
-#endif
-	size_t d_corpusSize;
-	double d_l1;
-	double d_l2;
-	double d_l3;
+	LinearInterpolationSmoothingPrivate *d_private;
 };
-
-inline LinearInterpolationSmoothing::LinearInterpolationSmoothing(
-	LinearInterpolationSmoothing const &other)
-{
-	copy(other);
-}
 
 }
 }

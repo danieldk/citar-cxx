@@ -25,8 +25,9 @@
 
 #include <tr1/memory>
 
-#include "SentenceHandler.hh"
-#include "TaggedWord.hh"
+#include <citar/util/NonCopyable.hh>
+#include <citar/corpus/SentenceHandler.hh>
+#include <citar/corpus/TaggedWord.hh>
 
 namespace citar {
 namespace corpus {
@@ -36,19 +37,13 @@ namespace corpus {
  * <i>d_startMarkers</i> and <i>d_endMarkers</i> fields to add start/end
  * markers to sentences.
  */
-class CorpusReader
+class CorpusReader : public citar::util::NonCopyable
 {
 public:
-	CorpusReader (std::vector<TaggedWord> const &startMarkers,
-		std::vector<TaggedWord> const &endMarkers,
-		bool decapitalizeFirstWord = false) :
-		d_startMarkers(startMarkers), d_endMarkers(endMarkers),
-		d_decapitalizeFirstWord(decapitalizeFirstWord) {}
-
 	/**
 	 * Register a sentence handler class.
 	 */
-	void addSentenceHandler(std::tr1::shared_ptr<SentenceHandler> sentenceHandler);
+	virtual void addSentenceHandler(std::tr1::shared_ptr<SentenceHandler> sentenceHandler) = 0;
 
 	/**
 	 * Parse a corpus. The registered sentence handlers will be called to handle
@@ -58,16 +53,7 @@ public:
 
 	virtual ~CorpusReader() {}
 protected:
-	std::vector<std::tr1::shared_ptr<SentenceHandler> > d_sentenceHandlers;
-	std::vector<TaggedWord> d_startMarkers;
-	std::vector<TaggedWord> d_endMarkers;
-	bool d_decapitalizeFirstWord;
 };
-
-inline void CorpusReader::addSentenceHandler(std::tr1::shared_ptr<SentenceHandler> sentenceHandler)
-{
-	d_sentenceHandlers.push_back(sentenceHandler);
-}
 
 }
 }

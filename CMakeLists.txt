@@ -22,9 +22,12 @@ include_directories (${CITAR_BINARY_DIR}/include)
 
 add_library(citar SHARED
   src/corpus/BrownCorpusReader.cpp
+  src/corpus/BrownCorpusReaderPrivate.cpp
   src/cwrap/cwrap.cpp
   src/tagger/hmm/HMMTagger.cpp
+  src/tagger/hmm/HMMTaggerPrivate.cpp
   src/tagger/hmm/LinearInterpolationSmoothing.cpp
+  src/tagger/hmm/LinearInterpolationSmoothingPrivate.cpp
   src/tagger/hmm/Model.cpp
   src/tagger/wordhandler/KnownWordHandler.cpp
   src/tagger/wordhandler/SuffixWordHandler.cpp
