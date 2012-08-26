@@ -1,23 +1,19 @@
-/*
- * Copyright 2008-2010 Daniel de Kok
- *
- * This file is part of citar.
- *
- * Citar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Citar is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Citar.  If not, see <http://www.gnu.org/licenses/>.
- */
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
-#include "Model.ih"
+#include <tr1/memory>
+#include <tr1/unordered_map>
+
+#include <citar/tagger/hmm/Model.hh>
+
+using namespace std;
+using namespace std::tr1;
+using namespace citar::tagger;
 
 shared_ptr<WordTagFreqs> Model::readLexicon(
 	std::istream &lexiconStream,

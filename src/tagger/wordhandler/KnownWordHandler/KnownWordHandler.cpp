@@ -1,8 +1,16 @@
-/*
- * Copyright 2008 Daniel de Kok
- */
+#include <algorithm>
+#include <cmath>
+#include <iterator>
+#include <string>
 
-#include "KnownWordHandler.ih"
+#include <tr1/memory>
+
+#include <citar/tagger/hmm/Model.hh>
+#include <citar/tagger/wordhandler/KnownWordHandler.hh>
+
+using namespace std;
+using namespace std::tr1;
+using namespace citar::tagger;
 
 KnownWordHandler::KnownWordHandler(shared_ptr<Model const> model,
 	WordHandler const *fallbackWordHandler)

@@ -1,8 +1,17 @@
-/*
- * Copyright 2008 Daniel de Kok
- */
+#include <algorithm>
+#include <cmath>
+#include <map>
+#include <string>
 
-#include "WordSuffixTree.ih"
+#include <tr1/unordered_map>
+
+#include <citar/tagger/hmm/UniGram.hh>
+#include <citar/tagger/wordhandler/WordHandler.hh>
+#include <citar/tagger/wordhandler/WordSuffixTree.hh>
+
+using namespace std;
+using namespace std::tr1;
+using namespace citar::tagger;
 
 void WordSuffixTree::addWord(string word, map<size_t, size_t> tagFreqs)
 {

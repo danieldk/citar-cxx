@@ -1,8 +1,20 @@
-/*
- * Copyright 2008 Daniel de Kok
- */
+#include <algorithm>
+#include <cctype>
+#include <cmath>
+#include <iterator>
+#include <map>
+#include <string>
 
-#include "SuffixWordHandler.ih"
+#include <tr1/memory>
+#include <tr1/unordered_map>
+
+#include <citar/tagger/hmm/Model.hh>
+#include <citar/tagger/wordhandler/SuffixWordHandler.hh>
+#include <citar/tagger/wordhandler/WordSuffixTree.hh>
+
+using namespace std;
+using namespace std::tr1;
+using namespace citar::tagger;
 
 SuffixWordHandler::SuffixWordHandler(
 	shared_ptr<Model const> model, size_t maxSuffixLength,

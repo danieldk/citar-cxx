@@ -1,23 +1,19 @@
-/*
- * Copyright 2008 Daniel de Kok
- *
- * This file is part of citar.
- *
- * Citar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Citar is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Citar.  If not, see <http://www.gnu.org/licenses/>.
- */
+#include <cmath>
+#include <memory>
 
-#include "LinearInterpolationSmoothing.ih"
+#include <tr1/memory>
+#include <tr1/unordered_map>
+
+#include <citar/config.hh>
+#include <citar/tagger/hmm/BiGram.hh>
+#include <citar/tagger/hmm/LinearInterpolationSmoothing.hh>
+#include <citar/tagger/hmm/Model.hh>
+#include <citar/tagger/hmm/TriGram.hh>
+#include <citar/tagger/hmm/UniGram.hh>
+
+using namespace std;
+using namespace std::tr1;
+using namespace citar::tagger;
 
 LinearInterpolationSmoothing::LinearInterpolationSmoothing(
 	std::tr1::shared_ptr<Model const> model)
