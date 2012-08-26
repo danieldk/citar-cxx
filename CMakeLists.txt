@@ -14,12 +14,29 @@ endif (NOT TR1_AVAILABLE)
 
 OPTION (WITH_TRIGRAM_CACHE "Enable trigram caching" OFF)
 
-CONFIGURE_FILE (${CITAR_SOURCE_DIR}/libcitar/citar/config.hh.cmake
+CONFIGURE_FILE (${CITAR_SOURCE_DIR}/include/citar/config.hh.cmake
   ${CITAR_SOURCE_DIR}/libcitar/citar/config.hh) 
 
-include_directories (${CITAR_SOURCE_DIR}/libcitar)
+include_directories (${CITAR_SOURCE_DIR}/include)
 
-add_subdirectory(libcitar)
+add_library(citar SHARED
+  src/corpus/BrownCorpusReader/BrownCorpusReader.cpp
+  src/cwrap/cwrap.cpp
+  src/tagger/hmm/HMMTagger/HMMTagger.cpp
+  src/tagger/hmm/LinearInterpolationSmoothing/LinearInterpolationSmoothing.cpp
+  src/tagger/hmm/Model/Model.cpp
+  src/tagger/wordhandler/KnownWordHandler/KnownWordHandler.cpp
+  src/tagger/wordhandler/SuffixWordHandler/SuffixWordHandler.cpp
+  src/tagger/wordhandler/WordSuffixTree/WordSuffixTree.cpp
+)
+
+install(TARGETS citar
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+
+install(DIRECTORY include/citar
+  DESTINATION include)
 
 add_executable(citar-evaluate util/evaluate.cpp)
 target_link_libraries(citar-evaluate citar)
