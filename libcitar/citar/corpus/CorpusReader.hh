@@ -1,29 +1,29 @@
 /*
  * Copyright 2008 Daniel de Kok
  *
- * This file is part of Citar.
+ * This file is part of citar.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * Citar is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
+ * Citar is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * You should have received a copy of the GNU General Public License
+ * along with Citar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef CITAR_CORPUSREADER_HH
 #define CITAR_CORPUSREADER_HH
 
-#include <QSharedPointer>
-#include <QTextStream>
-#include <QVector>
+#include <iostream>
+#include <vector>
+
+#include <tr1/memory>
 
 #include "SentenceHandler.hh"
 #include "TaggedWord.hh"
@@ -39,8 +39,8 @@ namespace corpus {
 class CorpusReader
 {
 public:
-	CorpusReader (QVector<TaggedWord> const &startMarkers,
-		QVector<TaggedWord> const &endMarkers,
+	CorpusReader (std::vector<TaggedWord> const &startMarkers,
+		std::vector<TaggedWord> const &endMarkers,
 		bool decapitalizeFirstWord = false) :
 		d_startMarkers(startMarkers), d_endMarkers(endMarkers),
 		d_decapitalizeFirstWord(decapitalizeFirstWord) {}
@@ -48,23 +48,23 @@ public:
 	/**
 	 * Register a sentence handler class.
 	 */
-	void addSentenceHandler(QSharedPointer<SentenceHandler> sentenceHandler);
+	void addSentenceHandler(std::tr1::shared_ptr<SentenceHandler> sentenceHandler);
 
 	/**
 	 * Parse a corpus. The registered sentence handlers will be called to handle
 	 * each parsed sentence.
 	 */
-	virtual void parse(QTextStream &in) = 0;
+	virtual void parse(std::istream &in) = 0;
 
 	virtual ~CorpusReader() {}
 protected:
-	QVector<QSharedPointer<SentenceHandler> > d_sentenceHandlers;
-	QVector<TaggedWord> d_startMarkers;
-	QVector<TaggedWord> d_endMarkers;
+	std::vector<std::tr1::shared_ptr<SentenceHandler> > d_sentenceHandlers;
+	std::vector<TaggedWord> d_startMarkers;
+	std::vector<TaggedWord> d_endMarkers;
 	bool d_decapitalizeFirstWord;
 };
 
-inline void CorpusReader::addSentenceHandler(QSharedPointer<SentenceHandler> sentenceHandler)
+inline void CorpusReader::addSentenceHandler(std::tr1::shared_ptr<SentenceHandler> sentenceHandler)
 {
 	d_sentenceHandlers.push_back(sentenceHandler);
 }

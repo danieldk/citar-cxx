@@ -1,14 +1,14 @@
 #include <algorithm>
 #include <cmath>
 #include <map>
+#include <string>
 
-#include <QChar>
-#include <QHash>
-#include <QString>
+#include <tr1/unordered_map>
 
 #include <citar/tagger/hmm/UniGram.hh>
 #include <citar/tagger/wordhandler/WordHandler.hh>
 #include <citar/tagger/wordhandler/WordSuffixTree.hh>
 
 using namespace std;
+using namespace std::tr1;
 using namespace citar::tagger;

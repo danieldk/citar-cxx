@@ -1,27 +1,30 @@
 /*
  * Copyright 2008 Daniel de Kok
  *
- * This file is part of Citar.
+ * This file is part of citar.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * Citar is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
+ * Citar is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * You should have received a copy of the GNU General Public License
+ * along with Citar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef LANGKIT_TAGGER_TRIGRAM
 #define LANGKIT_TAGGER_TRIGRAM
 
-#include <QHash>
+#include <functional>
+#include <string>
+
+#include <tr1/functional>
+#include <tr1/unordered_map>
 
 namespace citar {
 namespace tagger {
@@ -50,15 +53,20 @@ inline bool operator<(TriGram const &x, TriGram const &y)
 		return x.t3 < y.t3;
 }
 
-inline uint qHash(TriGram const &triGram)
+struct TriGramHash : public std::unary_function<TriGram, std::size_t>
 {
-	uint seed = triGram.t1;
-	seed ^= triGram.t2 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-	seed ^= triGram.t3 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-	return seed;
-}
+	std::size_t operator()(TriGram const &triGram) const
+	{
+		std::tr1::hash<size_t> numHash;
+		int seed = numHash(triGram.t1);
+		seed ^= numHash(triGram.t2) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+		seed ^= numHash(triGram.t3) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 
-typedef QHash<TriGram, size_t> TriGramFreqs;
+		return seed;
+	}
+};
+
+typedef std::tr1::unordered_map<TriGram, size_t, TriGramHash> TriGramFreqs;
 }
 }
 

@@ -1,26 +1,10 @@
 /*
  * Copyright 2008 Daniel de Kok
- *
- * This file is part of Citar.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include "KnownWordHandler.ih"
 
-KnownWordHandler::KnownWordHandler(QSharedPointer<Model const> model,
+KnownWordHandler::KnownWordHandler(shared_ptr<Model const> model,
 	WordHandler const *fallbackWordHandler)
 :
 	d_lexicon(new WordTagProbLexicon),
@@ -39,7 +23,7 @@ KnownWordHandler &KnownWordHandler::operator=(KnownWordHandler const &other)
 
 void KnownWordHandler::copy(KnownWordHandler const &other)
 {
-	d_lexicon = QSharedPointer<WordTagProbLexicon>(new WordTagProbLexicon(*other.d_lexicon));
+	d_lexicon.reset(new WordTagProbLexicon(*other.d_lexicon));
 	d_fallbackWordHandler = other.d_fallbackWordHandler;
 }
 
@@ -50,18 +34,18 @@ void KnownWordHandler::calcWordTagProbs(WordTagFreqs const &wordTagFreqs,
 		wordIter != wordTagFreqs.end(); ++wordIter)
 	{
 		for (std::map<size_t, size_t>::const_iterator tagIter =
-			wordIter.value().begin(); tagIter != wordIter.value().end();
+			wordIter->second.begin(); tagIter != wordIter->second.end();
 			++tagIter)
 		{
 			// Calculate the maximum likelihood probability P(w|t).
 			double p = log(static_cast<double>(tagIter->second) /
-				uniGramFreqs.find(tagIter->first).value());
-			(*d_lexicon)[wordIter.key()][tagIter->first] = p;
+				uniGramFreqs.find(tagIter->first)->second);
+			(*d_lexicon)[wordIter->first][tagIter->first] = p;
 		}
 	}
 }
 
-KnownWordHandler::ProbSet KnownWordHandler::tags(QString const &word) const
+KnownWordHandler::ProbSet KnownWordHandler::tags(string const &word) const
 {
 	// Find the maximum likelyhood probabilities, and add them to a set
 	// ordered by decreasing probability.
@@ -69,24 +53,22 @@ KnownWordHandler::ProbSet KnownWordHandler::tags(QString const &word) const
 	if (match != d_lexicon->end())
 	{
 		ProbSet result;
-		for (map<size_t, double>::const_iterator iter = match.value().begin();
-				iter != match.value().end(); ++iter)
-			result.insert(make_pair(iter->first, iter->second));
+		std::copy(match->second.begin(), match->second.end(),
+			inserter(result, result.begin()));
 		return result;
 	}
 	// The word was not found, try once more with the lowercase variant.
-	else if (word[0].isUpper())
+	else if (isupper(word[0]))
 	{
-		QString wordLower = word;
-		wordLower[0] = wordLower[0].toLower();
+		string wordLower = static_cast<char>(tolower(word[0])) +
+			word.substr(1);
 
 		match = d_lexicon->find(wordLower);
 		if (match != d_lexicon->end())
 		{
 			ProbSet result;
-			for (map<size_t, double>::const_iterator iter = match.value().begin();
-				iter != match.value().end(); ++iter)
-			result.insert(make_pair(iter->first, iter->second));
+			std::copy(match->second.begin(), match->second.end(),
+					inserter(result, result.begin()));
 			return result;
 		}
 	}

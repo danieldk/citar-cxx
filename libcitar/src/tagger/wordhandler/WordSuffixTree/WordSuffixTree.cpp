@@ -1,33 +1,17 @@
 /*
  * Copyright 2008 Daniel de Kok
- *
- * This file is part of Citar.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include "WordSuffixTree.ih"
 
-void WordSuffixTree::addWord(QString word, map<size_t, size_t> tagFreqs)
+void WordSuffixTree::addWord(string word, map<size_t, size_t> tagFreqs)
 {
 	// We will traverse the suffix tree by reverse suffix order.
 	reverse(word.begin(), word.end());
 
 	// Chop the suffix to the length we are interested in.
-	if (static_cast<size_t>(word.size()) > d_maxLength)
-		word = word.left(d_maxLength);
+	if (word.size() > d_maxLength)
+		word = word.substr(0, d_maxLength);
 
 	d_rootNode->addSuffix(word, tagFreqs);
 }
@@ -42,14 +26,14 @@ void WordSuffixTree::calculateTheta()
 	size_t freqSum = 0;
 	for (UniGramFreqs::const_iterator iter = d_uniGrams->begin();
 			iter != d_uniGrams->end(); ++iter)
-		freqSum += iter.value();
+		freqSum += iter->second;
 
 	double stdDevSum = 0.0;
 	for (UniGramFreqs::const_iterator iter = d_uniGrams->begin();
 			iter != d_uniGrams->end(); ++iter)
 	{
 		// P(t)
-		double p = iter.value() / static_cast<double>(freqSum);
+		double p = iter->second / static_cast<double>(freqSum);
 
 		stdDevSum += pow(p - pAvg, 2.0);
 	}
@@ -57,19 +41,19 @@ void WordSuffixTree::calculateTheta()
 	d_theta = sqrt(stdDevSum / (d_uniGrams->size() - 1));
 }
 
-QHash<size_t, double> WordSuffixTree::suffixTagProbs(QString word)
+unordered_map<size_t, double> WordSuffixTree::suffixTagProbs(string word)
 {
 	// We will search the tree by reverse suffix order.
 	reverse(word.begin(), word.end());
 
 	// Chop to the length we are interested in.
-	if (static_cast<size_t>(word.size()) > d_maxLength)
-		word = word.left(d_maxLength);
+	if (word.size() > d_maxLength)
+		word = word.substr(0, d_maxLength);
 
-	return d_rootNode->suffixTagProbs(word, QHash<size_t, double>());
+	return d_rootNode->suffixTagProbs(word, unordered_map<size_t, double>());
 }
 
-void WordSuffixTree::TreeNode::addSuffix(QString const &reverseSuffix,
+void WordSuffixTree::TreeNode::addSuffix(string const &reverseSuffix,
 	map<size_t, size_t> const &tagFreqs)
 {
 	// Add frequencies for all the tags seen for the word the current
@@ -87,35 +71,35 @@ void WordSuffixTree::TreeNode::addSuffix(QString const &reverseSuffix,
 		return;
 
 	// Add a transition.
-	QChar transitionChar = reverseSuffix[0];
+	char transitionChar = reverseSuffix[0];
 	if (d_children.find(transitionChar) == d_children.end())
-		d_children[transitionChar] = QSharedPointer<TreeNode>(new TreeNode(d_tree));
-	d_children[transitionChar]->addSuffix(reverseSuffix.mid(1), tagFreqs);
+		d_children[transitionChar].reset(new TreeNode(d_tree));
+	d_children[transitionChar]->addSuffix(reverseSuffix.substr(1), tagFreqs);
 }
 
-QHash<size_t, double> WordSuffixTree::TreeNode::bayesianInversion(
-	QHash<size_t, double> const &tagProbs) const
+unordered_map<size_t, double> WordSuffixTree::TreeNode::bayesianInversion(
+	unordered_map<size_t, double> const &tagProbs) const
 {
-	QHash<size_t, double> inverseTagProbs;
+	unordered_map<size_t, double> inverseTagProbs;
 
-	for (QHash<size_t, double>::const_iterator iter = tagProbs.begin();
+	for (unordered_map<size_t, double>::const_iterator iter = tagProbs.begin();
 			iter != tagProbs.end(); ++iter)
-		inverseTagProbs[iter.key()] =
-			iter.value() / d_tree->uniGrams().find(UniGram(iter.key())).value();
+		inverseTagProbs[iter->first] =
+			iter->second / d_tree->uniGrams().find(UniGram(iter->first))->second;
 
 	return inverseTagProbs;
 }
 
-QHash<size_t, double> WordSuffixTree::TreeNode::suffixTagProbs(
-	QString const &reverseSuffix, QHash<size_t, double> const &tagProbs)
+unordered_map<size_t, double> WordSuffixTree::TreeNode::suffixTagProbs(
+	string const &reverseSuffix, unordered_map<size_t, double> const &tagProbs)
 {
-	QHash<size_t, double> newTagProbs;
+	unordered_map<size_t, double> newTagProbs;
 
-	for(QHash<size_t, size_t>::const_iterator iter =
+	for(unordered_map<size_t, size_t>::const_iterator iter =
 		d_tree->root().d_tagFreqs.begin(); iter!= d_tree->root().d_tagFreqs.end();
 		++iter)
 	{
-		size_t const &tag = iter.key();
+		size_t const &tag = iter->first;
 
 		double p = 0.0;
 		if (d_tagFreqs.find(tag) != d_tagFreqs.end())
@@ -126,7 +110,7 @@ QHash<size_t, double> WordSuffixTree::TreeNode::suffixTagProbs(
 		if (&d_tree->root() != this)
 		{
 			// Add weighted probability of the shorter suffixes.
-			p += d_tree->theta() * tagProbs.find(tag).value();
+			p += d_tree->theta() * tagProbs.find(tag)->second;
 
 			// Normalize.
 			p /= d_tree->theta() + 1.0;
@@ -140,11 +124,11 @@ QHash<size_t, double> WordSuffixTree::TreeNode::suffixTagProbs(
 		return bayesianInversion(newTagProbs);
 
 	// If we can't make any further transitions, we are done.
-	QChar transitionChar = reverseSuffix[0];
+	char transitionChar = reverseSuffix[0];
 	if (d_children.find(transitionChar) == d_children.end())
 		return bayesianInversion(newTagProbs);
 
 	// Transition.
-	return d_children[transitionChar]->suffixTagProbs(reverseSuffix.mid(1),
+	return d_children[transitionChar]->suffixTagProbs(reverseSuffix.substr(1),
 		newTagProbs);
 }

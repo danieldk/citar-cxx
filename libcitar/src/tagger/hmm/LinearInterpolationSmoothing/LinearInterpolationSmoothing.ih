@@ -1,10 +1,10 @@
 #include <cmath>
 #include <memory>
 
-#include <QReadLocker>
-#include <QSharedPointer>
-#include <QWriteLocker>
+#include <tr1/memory>
+#include <tr1/unordered_map>
 
+#include <citar/config.hh>
 #include <citar/tagger/hmm/BiGram.hh>
 #include <citar/tagger/hmm/LinearInterpolationSmoothing.hh>
 #include <citar/tagger/hmm/Model.hh>
@@ -12,4 +12,5 @@
 #include <citar/tagger/hmm/UniGram.hh>
 
 using namespace std;
+using namespace std::tr1;
 using namespace citar::tagger;

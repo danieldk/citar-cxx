@@ -1,20 +1,20 @@
 /*
  * Copyright 2008 Daniel de Kok
  *
- * This file is part of Citar.
+ * This file is part of citar.
  *
- * This program is free software: you can redistribute it and/or modify
+ * Citar is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * Citar is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Citar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef LANGKIT_TAGGER_HMMTAGGER
@@ -22,9 +22,10 @@
 
 #include <cmath>
 #include <functional>
+#include <string>
+#include <vector>
 
-#include <QSharedPointer>
-#include <QVector>
+#include <tr1/memory>
 
 #include <citar/tagger/wordhandler/WordHandler.hh>
 #include "Model.hh"
@@ -40,7 +41,7 @@ namespace tagger {
 class HMMTagger
 {
 public:
-	HMMTagger(QSharedPointer<Model> model, WordHandler const *wordHandler,
+	HMMTagger(std::tr1::shared_ptr<Model> model, WordHandler const *wordHandler,
 		Smoothing const *smoothing,
 		double beamFactor = 1000.0)
 	:
@@ -48,15 +49,15 @@ public:
 		d_beamFactor(log(beamFactor)) {}
 
 	/**
-	 * Tag a sequence of words. A <i>QVector</i> of words is expected, the
+	 * Tag a sequence of words. A <i>vector</i> of words is expected, the
 	 * optimal tag sequence is returned. The sentence should be preceded
 	 * by two start markers ended by one end marker. The start markers
 	 * should have identical words and tags.
 	 */
-	QVector<QString> tag(QVector<QString> const &sentence)
+	std::vector<std::string> tag(std::vector<std::string> const &sentence)
 		const;
 private:
-	QSharedPointer<Model> d_model;
+	std::tr1::shared_ptr<Model> d_model;
 	WordHandler const *d_wordHandler;
 	Smoothing const *d_smoothing;
 	double d_beamFactor;
