@@ -29,6 +29,7 @@ add_library(citar SHARED
   src/tagger/hmm/LinearInterpolationSmoothing.cpp
   src/tagger/hmm/LinearInterpolationSmoothingPrivate.cpp
   src/tagger/hmm/Model.cpp
+  src/tagger/hmm/ModelPrivate.cpp
   src/tagger/wordhandler/KnownWordHandler.cpp
   src/tagger/wordhandler/SuffixWordHandler.cpp
   src/tagger/wordhandler/WordSuffixTree.cpp
