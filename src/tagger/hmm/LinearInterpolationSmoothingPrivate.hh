@@ -28,11 +28,11 @@
 #include <citar/config.hh>
 
 
-#include <citar/tagger/hmm/Bigram.hh>
+#include <citar/tagger/hmm/BiGram.hh>
 #include <citar/tagger/hmm/Model.hh>
 #include <citar/tagger/hmm/Smoothing.hh>
-#include <citar/tagger/hmm/Trigram.hh>
-#include <citar/tagger/hmm/Unigram.hh>
+#include <citar/tagger/hmm/TriGram.hh>
+#include <citar/tagger/hmm/UniGram.hh>
 
 namespace citar {
 namespace tagger {
