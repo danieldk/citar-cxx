@@ -1,6 +1,6 @@
 #include <fstream>
 
-#include <tr1/memory>
+#include <memory>
 
 #include <citar/tagger/hmm/Model.hh>
 
@@ -31,11 +31,11 @@ WordTagFreqs const &Model::lexicon() const
 	return d_private->lexicon();
 }
 
-std::tr1::unordered_map<size_t, std::string> const &Model::numberTags() const
+std::unordered_map<size_t, std::string> const &Model::numberTags() const
 {
 	return d_private->numberTags();
 }
-std::tr1::unordered_map<std::string, size_t> const &Model::tagNumbers() const
+std::unordered_map<std::string, size_t> const &Model::tagNumbers() const
 {
 	return d_private->tagNumbers();
 }
@@ -51,9 +51,9 @@ UniGramFreqs const &Model::uniGrams() const
 }
 
 
-std::tr1::shared_ptr<Model> Model::readModel(std::istream &lexiconStream, std::istream &nGramStream)
+std::shared_ptr<Model> Model::readModel(std::istream &lexiconStream, std::istream &nGramStream)
 {
-	return std::tr1::shared_ptr<Model>(
+	return std::shared_ptr<Model>(
 		new Model(ModelPrivate::readModel(lexiconStream, nGramStream)));
 }
 

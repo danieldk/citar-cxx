@@ -6,19 +6,19 @@
 #include <string>
 #include <vector>
 
-#include <tr1/memory>
-#include <tr1/unordered_map>
+#include <memory>
+#include <unordered_map>
 
 #include <citar/tagger/hmm/Model.hh>
 #include "ModelPrivate.hh"
 
 using namespace citar::tagger;
 
-std::tr1::shared_ptr<WordTagFreqs> ModelPrivate::readLexicon(
+std::shared_ptr<WordTagFreqs> ModelPrivate::readLexicon(
 	std::istream &lexiconStream,
-	std::tr1::unordered_map<std::string, size_t> const &tagNumbers)
+	std::unordered_map<std::string, size_t> const &tagNumbers)
 {
-	std::tr1::shared_ptr<WordTagFreqs> lexicon(
+	std::shared_ptr<WordTagFreqs> lexicon(
 		new WordTagFreqs);
 
 	std::string line;
@@ -51,16 +51,16 @@ std::tr1::shared_ptr<WordTagFreqs> ModelPrivate::readLexicon(
 ModelPrivate *ModelPrivate::readModel(std::istream &lexiconStream,
 	std::istream &nGramStream)
 {
-	std::tr1::shared_ptr<NGrams> nGrams = readNGrams(nGramStream);
-	std::tr1::shared_ptr<WordTagFreqs> lexicon =
+	std::shared_ptr<NGrams> nGrams = readNGrams(nGramStream);
+	std::shared_ptr<WordTagFreqs> lexicon =
 		readLexicon(lexiconStream, nGrams->tagNumbers);
 
 	return new ModelPrivate(lexicon, nGrams);
 }
 
-std::tr1::shared_ptr<NGrams> ModelPrivate::readNGrams(std::istream &lexiconStream)
+std::shared_ptr<NGrams> ModelPrivate::readNGrams(std::istream &lexiconStream)
 {
-	std::tr1::shared_ptr<NGrams> nGrams(new NGrams);
+	std::shared_ptr<NGrams> nGrams(new NGrams);
 
 	size_t tagNumber = 0;
 	std::string line;

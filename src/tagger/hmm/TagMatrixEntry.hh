@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include <tr1/unordered_map>
+#include <unordered_map>
 
 namespace citar {
 namespace tagger {
@@ -30,8 +30,8 @@ namespace tagger {
 struct TagMatrixEntry {
 	TagMatrixEntry(size_t const &newTag) : tag(newTag) {}
 	size_t tag;
-	std::tr1::unordered_map<TagMatrixEntry const *, double> probs;
-	std::tr1::unordered_map<TagMatrixEntry const *, TagMatrixEntry const *> bps;
+	std::unordered_map<TagMatrixEntry const *, double> probs;
+	std::unordered_map<TagMatrixEntry const *, TagMatrixEntry const *> bps;
 };
 
 }

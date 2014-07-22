@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <tr1/memory>
+#include <memory>
 
 #include <citar/util/NonCopyable.hh>
 
@@ -22,7 +22,7 @@ class Smoothing;
 class HMMTagger : citar::util::NonCopyable
 {
 public:
-	HMMTagger(std::tr1::shared_ptr<Model> model, WordHandler const *wordHandler,
+	HMMTagger(std::shared_ptr<Model> model, WordHandler const *wordHandler,
 		Smoothing const *smoothing,
 		double beamFactor = 1000.0);
 	~HMMTagger();

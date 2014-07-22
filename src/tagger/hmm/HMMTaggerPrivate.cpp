@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include <tr1/unordered_map>
+#include <unordered_map>
 
 #include <citar/tagger/wordhandler/WordHandler.hh>
 
@@ -12,7 +12,6 @@
 
 
 using namespace std;
-using namespace std::tr1;
 using namespace citar::tagger;
 
 vector<string> HMMTaggerPrivate::tag(vector<string> const &sentence) const

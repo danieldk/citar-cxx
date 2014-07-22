@@ -22,8 +22,8 @@
 
 #include <string>
 
-#include <tr1/memory>
-#include <tr1/unordered_map>
+#include <memory>
+#include <unordered_map>
 
 #include <citar/tagger/hmm/Model.hh>
 #include <citar/tagger/hmm/UniGram.hh>
@@ -54,15 +54,15 @@ public:
 	 * @maxTags The (maximum) number of (most probable) tags to return.
 	 */
 	SuffixWordHandler(
-			std::tr1::shared_ptr<Model const> model, size_t maxSuffixLength,
+			std::shared_ptr<Model const> model, size_t maxSuffixLength,
 			size_t upperMaxFreq, size_t lowerMaxFreq, size_t maxTags = 10);
 
 	ProbSet tags(std::string const &word) const;
 private:
 	SuffixWordHandler(SuffixWordHandler const &other);
 	SuffixWordHandler &operator=(SuffixWordHandler const &other);
-	std::tr1::shared_ptr<WordSuffixTree> d_upperSuffixTree;
-	std::tr1::shared_ptr<WordSuffixTree> d_lowerSuffixTree;
+	std::shared_ptr<WordSuffixTree> d_upperSuffixTree;
+	std::shared_ptr<WordSuffixTree> d_lowerSuffixTree;
 	size_t d_maxTags;
 };
 

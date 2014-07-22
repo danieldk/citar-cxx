@@ -5,8 +5,8 @@
 #include <map>
 #include <string>
 
-#include <tr1/memory>
-#include <tr1/unordered_map>
+#include <memory>
+#include <unordered_map>
 
 #include <citar/util/NonCopyable.hh>
 #include <citar/tagger/hmm/BiGram.hh>
@@ -17,7 +17,7 @@
 namespace citar {
 namespace tagger {
 
-typedef std::tr1::unordered_map<std::string, std::map<size_t, size_t> >
+typedef std::unordered_map<std::string, std::map<size_t, size_t> >
 	WordTagFreqs;
 
 /**
@@ -29,7 +29,7 @@ class ModelPrivate
 public:
 	BiGramFreqs const &biGrams() const;
 	WordTagFreqs const &lexicon() const;
-	std::tr1::unordered_map<size_t, std::string> const &numberTags() const;
+	std::unordered_map<size_t, std::string> const &numberTags() const;
 
 	/**
 	 * Read the model from input streams. An input stream for the lexicon, and
@@ -59,24 +59,24 @@ public:
 	static ModelPrivate *readModel(std::istream &lexiconStream,
 		std::istream &nGramStream);
 
-	std::tr1::unordered_map<std::string, size_t> const &tagNumbers() const;
+	std::unordered_map<std::string, size_t> const &tagNumbers() const;
 
 	TriGramFreqs const &triGrams() const;
 
 	UniGramFreqs const &uniGrams() const;
 private:
-	ModelPrivate(std::tr1::shared_ptr<WordTagFreqs> lexicon,
-		std::tr1::shared_ptr<NGrams> nGrams) :
+	ModelPrivate(std::shared_ptr<WordTagFreqs> lexicon,
+		std::shared_ptr<NGrams> nGrams) :
 		d_lexicon(lexicon), d_nGrams(nGrams) {}
 	ModelPrivate(ModelPrivate const &other);
 	ModelPrivate &operator=(ModelPrivate const &other);
-	static std::tr1::shared_ptr<WordTagFreqs>
+	static std::shared_ptr<WordTagFreqs>
 		readLexicon(std::istream &lexiconStream,
-		std::tr1::unordered_map<std::string, size_t> const &tagNumbers);
-	static std::tr1::shared_ptr<NGrams> readNGrams(std::istream &lexiconStream);
+		std::unordered_map<std::string, size_t> const &tagNumbers);
+	static std::shared_ptr<NGrams> readNGrams(std::istream &lexiconStream);
 
-	std::tr1::shared_ptr<WordTagFreqs> d_lexicon;
-	std::tr1::shared_ptr<NGrams> d_nGrams;
+	std::shared_ptr<WordTagFreqs> d_lexicon;
+	std::shared_ptr<NGrams> d_nGrams;
 };
 
 inline BiGramFreqs const &ModelPrivate::biGrams() const
@@ -89,12 +89,12 @@ inline WordTagFreqs const &ModelPrivate::lexicon() const
 	return *d_lexicon;
 }
 
-inline std::tr1::unordered_map<size_t, std::string> const &ModelPrivate::numberTags() const
+inline std::unordered_map<size_t, std::string> const &ModelPrivate::numberTags() const
 {
 	return d_nGrams->numberTags;
 }
 
-inline std::tr1::unordered_map<std::string, size_t> const &ModelPrivate::tagNumbers() const
+inline std::unordered_map<std::string, size_t> const &ModelPrivate::tagNumbers() const
 {
 	return d_nGrams->tagNumbers;
 }

@@ -1,8 +1,8 @@
 #include <cmath>
 #include <memory>
 
-#include <tr1/memory>
-#include <tr1/unordered_map>
+#include <memory>
+#include <unordered_map>
 
 #include <citar/config.hh>
 #include <citar/tagger/hmm/BiGram.hh>
@@ -14,11 +14,10 @@
 
 
 using namespace std;
-using namespace std::tr1;
 using namespace citar::tagger;
 
 LinearInterpolationSmoothingPrivate::LinearInterpolationSmoothingPrivate(
-	std::tr1::shared_ptr<Model const> model)
+	std::shared_ptr<Model const> model)
 :
 	d_uniGrams(new UniGramFreqs(model->uniGrams())),
 	d_biGrams(new BiGramFreqs(model->biGrams())),

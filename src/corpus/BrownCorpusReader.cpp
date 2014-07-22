@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <tr1/memory>
+#include <memory>
 
 #include <citar/corpus/BrownCorpusReader.hh>
 #include <citar/corpus/TaggedWord.hh>
@@ -28,7 +28,7 @@ BrownCorpusReader::~BrownCorpusReader()
 	delete d_private;
 }
 
-void BrownCorpusReader::addSentenceHandler(std::tr1::shared_ptr<SentenceHandler> sentenceHandler)
+void BrownCorpusReader::addSentenceHandler(std::shared_ptr<SentenceHandler> sentenceHandler)
 {
 	d_private->addSentenceHandler(sentenceHandler);
 }

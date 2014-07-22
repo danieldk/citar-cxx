@@ -23,8 +23,6 @@
 #include <string>
 #include <vector>
 
-#include <tr1/memory>
-
 #include <citar/corpus/BrownCorpusReader.hh>
 #include <citar/corpus/SentenceHandler.hh>
 #include <citar/corpus/TaggedWord.hh>
@@ -35,7 +33,6 @@
 #include <citar/tagger/wordhandler/SuffixWordHandler.hh>
 
 using namespace std;
-using namespace std::tr1;
 using namespace citar::corpus;
 using namespace citar::tagger;
 

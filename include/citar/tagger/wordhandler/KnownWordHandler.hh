@@ -23,8 +23,8 @@
 #include <map>
 #include <string>
 
-#include <tr1/memory>
-#include <tr1/unordered_map>
+#include <memory>
+#include <unordered_map>
 
 #include "citar/tagger/hmm/Model.hh"
 #include "citar/tagger/hmm/UniGram.hh"
@@ -40,7 +40,7 @@ namespace tagger {
 class KnownWordHandler : public WordHandler
 {
 public:
-	typedef std::tr1::unordered_map<std::string, std::map<size_t, double> >
+	typedef std::unordered_map<std::string, std::map<size_t, double> >
 		WordTagProbLexicon;
 
 	/**
@@ -50,7 +50,7 @@ public:
 	 * @fallbackWordHandler A pointer to the <i>WordHandler</i> that should
 	 * 	be used when the word could not be found in the lexicon.
 	 */
-	KnownWordHandler(std::tr1::shared_ptr<Model const> model,
+	KnownWordHandler(std::shared_ptr<Model const> model,
 		WordHandler const *fallbackWordHandler);
 	KnownWordHandler(KnownWordHandler const &other) :
 		d_lexicon(new WordTagProbLexicon(*other.d_lexicon)),
@@ -64,7 +64,7 @@ private:
 	void calcWordTagProbs(WordTagFreqs const &wordTagFreqs,
 		UniGramFreqs const &uniGramFreqs);
 
-	std::tr1::shared_ptr<WordTagProbLexicon> d_lexicon;
+	std::shared_ptr<WordTagProbLexicon> d_lexicon;
 	WordHandler const *d_fallbackWordHandler;
 };
 

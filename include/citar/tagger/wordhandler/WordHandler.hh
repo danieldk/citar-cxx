@@ -25,7 +25,7 @@
 #include <string>
 #include <utility>
 
-#include <tr1/unordered_map>
+#include <unordered_map>
 
 #include <citar/tagger/hmm/UniGram.hh>
 #include <citar/utility/PairSecondGtComp.hh>

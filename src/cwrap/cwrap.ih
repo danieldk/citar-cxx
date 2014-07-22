@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <tr1/memory>
-
 #include <citar/tagger/hmm/Model.hh>
 #include <citar/tagger/hmm/HMMTagger.hh>
 #include <citar/tagger/hmm/LinearInterpolationSmoothing.hh>

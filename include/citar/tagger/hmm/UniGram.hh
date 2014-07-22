@@ -23,8 +23,8 @@
 #include <functional>
 #include <string>
 
-#include <tr1/functional>
-#include <tr1/unordered_map>
+#include <functional>
+#include <unordered_map>
 
 namespace citar {
 namespace tagger {
@@ -49,11 +49,11 @@ struct UniGramHash : public std::unary_function<UniGram, std::size_t>
 {
 	std::size_t operator()(UniGram const &uniGram) const
 	{
-		return std::tr1::hash<size_t>()(uniGram.t1);
+		return std::hash<size_t>()(uniGram.t1);
 	}
 };
 
-typedef std::tr1::unordered_map<UniGram, size_t, UniGramHash> UniGramFreqs;
+typedef std::unordered_map<UniGram, size_t, UniGramHash> UniGramFreqs;
 
 }
 }

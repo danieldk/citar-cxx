@@ -23,8 +23,8 @@
 #include <functional>
 #include <string>
 
-#include <tr1/functional>
-#include <tr1/unordered_map>
+#include <functional>
+#include <unordered_map>
 
 namespace citar {
 namespace tagger {
@@ -54,7 +54,7 @@ struct BiGramHash : public std::unary_function<BiGram, std::size_t>
 {
 	std::size_t operator()(BiGram const &biGram) const
 	{
-		std::tr1::hash<size_t> numHash;
+		std::hash<size_t> numHash;
 		int seed = numHash(biGram.t1);
 		seed ^= numHash(biGram.t2) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 
@@ -62,7 +62,7 @@ struct BiGramHash : public std::unary_function<BiGram, std::size_t>
 	}
 };
 
-typedef std::tr1::unordered_map<BiGram, size_t, BiGramHash> BiGramFreqs;
+typedef std::unordered_map<BiGram, size_t, BiGramHash> BiGramFreqs;
 }
 }
 

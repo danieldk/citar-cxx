@@ -6,12 +6,11 @@
 #include <string>
 #include <vector>
 
-#include <tr1/memory>
+#include <memory>
 
 #include "BrownCorpusReaderPrivate.hh"
 
 using namespace std;
-using namespace std::tr1;
 using namespace citar::corpus;
 
 void BrownCorpusReaderPrivate::parse(std::istream &in)

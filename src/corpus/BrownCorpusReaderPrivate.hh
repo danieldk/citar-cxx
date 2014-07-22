@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-#include <tr1/memory>
+#include <memory>
 
 #include <citar/corpus/CorpusReader.hh>
 #include <citar/corpus/TaggedWord.hh>
@@ -40,18 +40,18 @@ public:
 			bool decapitalizeFirstWord = false) :
 		d_startMarkers(startMarkers), d_endMarkers(endMarkers),
 		d_decapitalizeFirstWord(decapitalizeFirstWord) {}
-	void addSentenceHandler(std::tr1::shared_ptr<SentenceHandler> sentenceHandler);
+	void addSentenceHandler(std::shared_ptr<SentenceHandler> sentenceHandler);
 	void parse(std::istream &in);
 private:
 	std::vector<TaggedWord> parseLine(std::string const &line) const;
 
-	std::vector<std::tr1::shared_ptr<SentenceHandler> > d_sentenceHandlers;
+	std::vector<std::shared_ptr<SentenceHandler> > d_sentenceHandlers;
 	std::vector<TaggedWord> d_startMarkers;
 	std::vector<TaggedWord> d_endMarkers;
 	bool d_decapitalizeFirstWord;
 };
 
-inline void BrownCorpusReaderPrivate::addSentenceHandler(std::tr1::shared_ptr<SentenceHandler> sentenceHandler)
+inline void BrownCorpusReaderPrivate::addSentenceHandler(std::shared_ptr<SentenceHandler> sentenceHandler)
 {
 	d_sentenceHandlers.push_back(sentenceHandler);
 }

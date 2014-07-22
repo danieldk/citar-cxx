@@ -23,7 +23,7 @@
 #include <iostream>
 #include <vector>
 
-#include <tr1/memory>
+#include <memory>
 
 #include <citar/util/NonCopyable.hh>
 #include <citar/corpus/SentenceHandler.hh>
@@ -43,7 +43,7 @@ public:
 	/**
 	 * Register a sentence handler class.
 	 */
-	virtual void addSentenceHandler(std::tr1::shared_ptr<SentenceHandler> sentenceHandler) = 0;
+	virtual void addSentenceHandler(std::shared_ptr<SentenceHandler> sentenceHandler) = 0;
 
 	/**
 	 * Parse a corpus. The registered sentence handlers will be called to handle

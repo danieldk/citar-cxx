@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <tr1/memory>
+#include <memory>
 
 #include <citar/tagger/wordhandler/WordHandler.hh>
 #include <citar/tagger/hmm/Model.hh>
@@ -23,7 +23,7 @@ namespace tagger {
 class HMMTaggerPrivate
 {
 public:
-	HMMTaggerPrivate(std::tr1::shared_ptr<Model> model, WordHandler const *wordHandler,
+	HMMTaggerPrivate(std::shared_ptr<Model> model, WordHandler const *wordHandler,
 		Smoothing const *smoothing,
 		double beamFactor = 1000.0)
 	:
@@ -39,7 +39,7 @@ public:
 	std::vector<std::string> tag(std::vector<std::string> const &sentence)
 		const;
 private:
-	std::tr1::shared_ptr<Model> d_model;
+	std::shared_ptr<Model> d_model;
 	WordHandler const *d_wordHandler;
 	Smoothing const *d_smoothing;
 	double d_beamFactor;

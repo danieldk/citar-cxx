@@ -23,8 +23,8 @@
 #include <map>
 #include <string>
 
-#include <tr1/memory>
-#include <tr1/unordered_map>
+#include <memory>
+#include <unordered_map>
 
 #include <citar/tagger/hmm/UniGram.hh>
 #include <citar/tagger/wordhandler/WordHandler.hh>
@@ -41,7 +41,7 @@ public:
 		d_rootNode(new TreeNode(this)),
 		d_maxLength(maxLength) {}
 	void addWord(std::string word, std::map<size_t, size_t> tagProbs);
-	std::tr1::unordered_map<size_t, double> suffixTagProbs(std::string word);
+	std::unordered_map<size_t, double> suffixTagProbs(std::string word);
 	void calculateTheta();
 
 	double theta() const;
@@ -54,23 +54,23 @@ private:
 		TreeNode(WordSuffixTree const *tree) : d_tree(tree), d_tagFreq(0) {}
 		void addSuffix(std::string const &reverseSuffix,
 			std::map<size_t, size_t> const &tagFreqs);
-		std::tr1::unordered_map<size_t, double> suffixTagProbs(
+		std::unordered_map<size_t, double> suffixTagProbs(
 			std::string const &reverseSuffix,
-			std::tr1::unordered_map<size_t, double> const &tagProbs);
+			std::unordered_map<size_t, double> const &tagProbs);
 	private:
 		TreeNode(TreeNode const &other);
 		TreeNode &operator=(TreeNode const &other);
-		std::tr1::unordered_map<size_t, double> bayesianInversion(
-			std::tr1::unordered_map<size_t, double> const &tagProbs) const;
+		std::unordered_map<size_t, double> bayesianInversion(
+			std::unordered_map<size_t, double> const &tagProbs) const;
 
-		std::tr1::unordered_map<size_t, size_t> d_tagFreqs;
+		std::unordered_map<size_t, size_t> d_tagFreqs;
 		WordSuffixTree const *d_tree;
-		std::map<char, std::tr1::shared_ptr<TreeNode> > d_children;
+		std::map<char, std::shared_ptr<TreeNode> > d_children;
 		size_t d_tagFreq;
 	};
 
-	std::tr1::shared_ptr<UniGramFreqs> d_uniGrams;
-	std::tr1::shared_ptr<TreeNode> d_rootNode;
+	std::shared_ptr<UniGramFreqs> d_uniGrams;
+	std::shared_ptr<TreeNode> d_rootNode;
 	size_t d_maxLength;
 	double d_theta;
 };

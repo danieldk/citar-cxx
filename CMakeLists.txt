@@ -5,12 +5,18 @@ if (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
    set (CMAKE_BUILD_TYPE Release)
 endif (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 
-include (${CITAR_SOURCE_DIR}/cmake/CXXFlags.cmake)
-include (${CITAR_SOURCE_DIR}/cmake/TR1Test.cmake)
 
-if (NOT TR1_AVAILABLE)
-  message (FATAL_ERROR "C++ TR1 headers are required!")
-endif (NOT TR1_AVAILABLE)
+IF( "${CMAKE_SYSTEM_NAME}" MATCHES "Darwin" )
+  SET(CMAKE_MACOSX_RPATH OFF)
+ENDIF()
+
+include (${CITAR_SOURCE_DIR}/cmake/CXXFlags.cmake)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+#if (NOT TR1_AVAILABLE)
+#  message (FATAL_ERROR "C++ TR1 headers are required!")
+#endif (NOT TR1_AVAILABLE)
 
 OPTION (WITH_TRIGRAM_CACHE "Enable trigram caching" OFF)
 

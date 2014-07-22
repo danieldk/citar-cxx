@@ -15,7 +15,7 @@ citar_tagger *citar_tagger_new(char const *lexicon, char const *ngrams)
   citar_tagger *ctagger = new citar_tagger;
 
   try {
-    std::tr1::shared_ptr<Model> model(Model::readModel(lexiconStream, ngramStream));
+    std::shared_ptr<Model> model(Model::readModel(lexiconStream, ngramStream));
     ctagger->unknownWordHandler = new SuffixWordHandler(model, 2, 2, 8);
     ctagger->knownWordHandler =
       new KnownWordHandler(model, ctagger->unknownWordHandler);

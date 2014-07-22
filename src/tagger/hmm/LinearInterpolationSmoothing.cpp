@@ -9,7 +9,7 @@ namespace citar {
 namespace tagger {
 
 LinearInterpolationSmoothing::LinearInterpolationSmoothing(
-		std::tr1::shared_ptr<Model const> model)
+		std::shared_ptr<Model const> model)
 	: d_private (new LinearInterpolationSmoothingPrivate(model))
 {
 }

@@ -20,7 +20,7 @@ public:
 			std::vector<TaggedWord> const &endMarkers,
 			bool decapitalizeFirstWord = false);
 	~BrownCorpusReader();
-	void addSentenceHandler(std::tr1::shared_ptr<SentenceHandler> sentenceHandler);
+	void addSentenceHandler(std::shared_ptr<SentenceHandler> sentenceHandler);
 	void parse(std::istream &in);
 private:
 	BrownCorpusReaderPrivate *d_private;

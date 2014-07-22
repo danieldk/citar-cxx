@@ -22,8 +22,8 @@
 
 #include <string>
 
-#include <tr1/memory>
-#include <tr1/unordered_map>
+#include <memory>
+#include <unordered_map>
 
 #include <citar/config.hh>
 
@@ -45,9 +45,9 @@ class LinearInterpolationSmoothingPrivate;
 class LinearInterpolationSmoothing : public Smoothing
 {
 public:
-	typedef std::tr1::unordered_map<TriGram, double, TriGramHash> TriGramProbs;
+	typedef std::unordered_map<TriGram, double, TriGramHash> TriGramProbs;
 
-	LinearInterpolationSmoothing(std::tr1::shared_ptr<Model const> model);
+	LinearInterpolationSmoothing(std::shared_ptr<Model const> model);
 	~LinearInterpolationSmoothing();
 
 	/**

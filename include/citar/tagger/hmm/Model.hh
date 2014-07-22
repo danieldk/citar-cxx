@@ -24,8 +24,8 @@
 #include <map>
 #include <string>
 
-#include <tr1/memory>
-#include <tr1/unordered_map>
+#include <memory>
+#include <unordered_map>
 
 #include <citar/util/NonCopyable.hh>
 #include <citar/tagger/hmm/BiGram.hh>
@@ -36,13 +36,13 @@
 namespace citar {
 namespace tagger {
 
-typedef std::tr1::unordered_map<std::string, std::map<size_t, size_t> >
+typedef std::unordered_map<std::string, std::map<size_t, size_t> >
 	WordTagFreqs;
 
 struct NGrams
 {
-	std::tr1::unordered_map<std::string, size_t> tagNumbers;
-	std::tr1::unordered_map<size_t, std::string> numberTags;
+	std::unordered_map<std::string, size_t> tagNumbers;
+	std::unordered_map<size_t, std::string> numberTags;
 	UniGramFreqs uniGrams;
 	BiGramFreqs biGrams;
 	TriGramFreqs triGrams;
@@ -61,7 +61,7 @@ public:
 
 	BiGramFreqs const &biGrams() const;
 	WordTagFreqs const &lexicon() const;
-	std::tr1::unordered_map<size_t, std::string> const &numberTags() const;
+	std::unordered_map<size_t, std::string> const &numberTags() const;
 
 	/**
 	 * Read the model from input streams. An input stream for the lexicon, and
@@ -88,10 +88,10 @@ public:
 	 * WPO VBD 5
 	 * </pre>
 	 */
-	static std::tr1::shared_ptr<Model> readModel(std::istream &lexiconStream,
+	static std::shared_ptr<Model> readModel(std::istream &lexiconStream,
 		std::istream &nGramStream);
 
-	std::tr1::unordered_map<std::string, size_t> const &tagNumbers() const;
+	std::unordered_map<std::string, size_t> const &tagNumbers() const;
 
 	TriGramFreqs const &triGrams() const;
 

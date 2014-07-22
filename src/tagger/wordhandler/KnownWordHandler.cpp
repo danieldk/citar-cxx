@@ -3,13 +3,12 @@
 #include <iterator>
 #include <string>
 
-#include <tr1/memory>
+#include <memory>
 
 #include <citar/tagger/hmm/Model.hh>
 #include <citar/tagger/wordhandler/KnownWordHandler.hh>
 
 using namespace std;
-using namespace std::tr1;
 using namespace citar::tagger;
 
 KnownWordHandler::KnownWordHandler(shared_ptr<Model const> model,

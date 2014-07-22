@@ -22,8 +22,8 @@
 
 #include <string>
 
-#include <tr1/memory>
-#include <tr1/unordered_map>
+#include <memory>
+#include <unordered_map>
 
 #include <citar/config.hh>
 
@@ -44,9 +44,9 @@ namespace tagger {
 class LinearInterpolationSmoothingPrivate : public Smoothing
 {
 public:
-	typedef std::tr1::unordered_map<TriGram, double, TriGramHash> TriGramProbs;
+	typedef std::unordered_map<TriGram, double, TriGramHash> TriGramProbs;
 
-	LinearInterpolationSmoothingPrivate(std::tr1::shared_ptr<Model const> model);
+	LinearInterpolationSmoothingPrivate(std::shared_ptr<Model const> model);
 	LinearInterpolationSmoothingPrivate(LinearInterpolationSmoothingPrivate const &other);
 	LinearInterpolationSmoothingPrivate &operator=(
 		LinearInterpolationSmoothingPrivate const &other);
@@ -60,11 +60,11 @@ private:
 	void calculateCorpusSize();
 	void calculateLambdas();
 
-	std::tr1::shared_ptr<UniGramFreqs> d_uniGrams;
-	std::tr1::shared_ptr<BiGramFreqs> d_biGrams;
-	std::tr1::shared_ptr<TriGramFreqs> d_triGrams;
+	std::shared_ptr<UniGramFreqs> d_uniGrams;
+	std::shared_ptr<BiGramFreqs> d_biGrams;
+	std::shared_ptr<TriGramFreqs> d_triGrams;
 #ifdef WITH_TRIGRAM_CACHE
-	std::tr1::shared_ptr<TriGramProbs> d_triGramCache;
+	std::shared_ptr<TriGramProbs> d_triGramCache;
 #endif
 	size_t d_corpusSize;
 	double d_l1;

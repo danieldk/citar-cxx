@@ -24,8 +24,6 @@
 #include <sstream>
 #include <vector>
 
-#include <tr1/memory>
-
 #include <citar/corpus/TaggedWord.hh>
 #include <citar/tagger/hmm/HMMTagger.hh>
 #include <citar/tagger/hmm/LinearInterpolationSmoothing.hh>
@@ -34,7 +32,6 @@
 #include <citar/tagger/wordhandler/SuffixWordHandler.hh>
 
 using namespace std;
-using namespace std::tr1;
 using namespace citar::corpus;
 using namespace citar::tagger;
 

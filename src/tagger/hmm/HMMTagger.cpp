@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 
-#include <tr1/unordered_map>
+#include <unordered_map>
 
 #include <citar/tagger/hmm/HMMTagger.hh>
 
@@ -9,7 +9,7 @@
 
 using namespace citar::tagger;
 
-HMMTagger::HMMTagger(std::tr1::shared_ptr<Model> model, WordHandler const *wordHandler,
+HMMTagger::HMMTagger(std::shared_ptr<Model> model, WordHandler const *wordHandler,
 	Smoothing const *smoothing, double beamFactor)
 	: d_private(new HMMTaggerPrivate(model, wordHandler, smoothing, beamFactor))
 {}

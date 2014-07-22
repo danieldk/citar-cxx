@@ -24,19 +24,18 @@
 #include <map>
 #include <vector>
 
-#include <tr1/memory>
-#include <tr1/unordered_map>
+#include <memory>
+#include <unordered_map>
 
 #include <citar/corpus/BrownCorpusReader.hh>
 #include <citar/corpus/SentenceHandler.hh>
 #include <citar/tagger/hmm/Model.hh>
 
 using namespace std;
-using namespace std::tr1;
 using namespace citar::corpus;
 using namespace citar::tagger;
 
-typedef std::tr1::unordered_map<string, map<string, size_t> > Lexicon;
+typedef std::unordered_map<string, map<string, size_t> > Lexicon;
 
 class TrainHandler : public SentenceHandler
 {
