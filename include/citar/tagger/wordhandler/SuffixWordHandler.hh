@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Daniel de Kok
+ * Copyright 2008, 2014 Daniel de Kok
  *
  * This file is part of citar.
  *
@@ -61,8 +61,8 @@ public:
 private:
 	SuffixWordHandler(SuffixWordHandler const &other);
 	SuffixWordHandler &operator=(SuffixWordHandler const &other);
-	std::shared_ptr<WordSuffixTree> d_upperSuffixTree;
-	std::shared_ptr<WordSuffixTree> d_lowerSuffixTree;
+	std::unique_ptr<WordSuffixTree> d_upperSuffixTree;
+	std::unique_ptr<WordSuffixTree> d_lowerSuffixTree;
 	size_t d_maxTags;
 };
 

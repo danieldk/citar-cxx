@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Daniel de Kok
+ * Copyright 2008, 2014 Daniel de Kok
  *
  * This file is part of citar.
  *
@@ -65,12 +65,12 @@ private:
 
 		std::unordered_map<size_t, size_t> d_tagFreqs;
 		WordSuffixTree const *d_tree;
-		std::map<char, std::shared_ptr<TreeNode> > d_children;
+		std::map<char, std::unique_ptr<TreeNode> > d_children;
 		size_t d_tagFreq;
 	};
 
 	std::shared_ptr<UniGramFreqs> d_uniGrams;
-	std::shared_ptr<TreeNode> d_rootNode;
+	std::unique_ptr<TreeNode> d_rootNode;
 	size_t d_maxLength;
 	double d_theta;
 };

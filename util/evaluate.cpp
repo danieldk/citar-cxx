@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Daniel de Kok
+ * Copyright 2008, 2014 Daniel de Kok
  *
  * This file is part of citar.
  *
@@ -21,6 +21,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <citar/corpus/BrownCorpusReader.hh>
@@ -40,8 +41,8 @@ class EvaluateHandler : public SentenceHandler
 {
 public:
 	EvaluateHandler(shared_ptr<Model> model,
-		shared_ptr<HMMTagger> hmmTagger) :
-		d_model(model), d_hmmTagger(hmmTagger),
+		unique_ptr<HMMTagger> hmmTagger) :
+		d_model(model), d_hmmTagger(std::move(hmmTagger)),
 		d_knownGood(0), d_knownBad(0), d_unknownGood(0), d_unknownBad(0) {}
 	void handleSentence(std::vector<TaggedWord> const &sentence);
 	size_t knownGood();
@@ -50,7 +51,7 @@ public:
 	size_t unknownBad();
 private:
 	shared_ptr<Model> d_model;
-	shared_ptr<HMMTagger> d_hmmTagger;
+	unique_ptr<HMMTagger> d_hmmTagger;
 	size_t d_knownGood;
 	size_t d_knownBad;
 	size_t d_unknownGood;
@@ -151,7 +152,7 @@ int main(int argc, char *argv[])
 
 	LinearInterpolationSmoothing smoothing(model);
 
-	shared_ptr<HMMTagger> hmmTagger(new HMMTagger(model,
+	unique_ptr<HMMTagger> hmmTagger(new HMMTagger(model,
 		&knownWordHandler, &smoothing));
 
 	ifstream corpusStream(argv[3]);
@@ -165,7 +166,7 @@ int main(int argc, char *argv[])
 	vector<TaggedWord> endTags(1, TaggedWord("<END>", "<END>"));
 	BrownCorpusReader brownCorpusReader(startTags, endTags);
 
-	shared_ptr<EvaluateHandler> evalHandler(new EvaluateHandler(model, hmmTagger));
+	shared_ptr<EvaluateHandler> evalHandler(new EvaluateHandler(model, std::move(hmmTagger)));
 	brownCorpusReader.addSentenceHandler(evalHandler);
 
 	brownCorpusReader.parse(corpusStream);

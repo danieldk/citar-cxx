@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Daniel de Kok
+ * Copyright 2008, 2014 Daniel de Kok
  *
  * This file is part of citar.
  *
@@ -60,11 +60,11 @@ private:
 	void calculateCorpusSize();
 	void calculateLambdas();
 
-	std::shared_ptr<UniGramFreqs> d_uniGrams;
-	std::shared_ptr<BiGramFreqs> d_biGrams;
-	std::shared_ptr<TriGramFreqs> d_triGrams;
+	std::unique_ptr<UniGramFreqs> d_uniGrams;
+	std::unique_ptr<BiGramFreqs> d_biGrams;
+	std::unique_ptr<TriGramFreqs> d_triGrams;
 #ifdef WITH_TRIGRAM_CACHE
-	std::shared_ptr<TriGramProbs> d_triGramCache;
+	std::unique_ptr<TriGramProbs> d_triGramCache;
 #endif
 	size_t d_corpusSize;
 	double d_l1;

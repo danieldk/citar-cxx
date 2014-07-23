@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Daniel de Kok
+ * Copyright 2008, 2014 Daniel de Kok
  *
  * This file is part of citar.
  *
@@ -50,10 +50,10 @@ public:
 	unordered_map<string, size_t> const &triGrams();
 	unordered_map<string, size_t> const &uniGrams();
 public:
-	shared_ptr<Lexicon> d_lexicon;
-	shared_ptr<unordered_map<string, size_t> > d_uniGrams;
-	shared_ptr<unordered_map<string, size_t> > d_biGrams;
-	shared_ptr<unordered_map<string, size_t> > d_triGrams;
+	unique_ptr<Lexicon> d_lexicon;
+	unique_ptr<unordered_map<string, size_t> > d_uniGrams;
+	unique_ptr<unordered_map<string, size_t> > d_biGrams;
+	unique_ptr<unordered_map<string, size_t> > d_triGrams;
 };
 
 void TrainHandler::handleSentence(vector<TaggedWord> const &sentence)

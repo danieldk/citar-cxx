@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Daniel de Kok
+ * Copyright 2008, 2014 Daniel de Kok
  *
  * This file is part of citar.
  *
@@ -65,8 +65,7 @@ int main(int argc, char *argv[])
 
 	LinearInterpolationSmoothing smoothing(model);
 
-	shared_ptr<HMMTagger> hmmTagger(new HMMTagger(model,
-		&knownWordHandler, &smoothing));
+	HMMTagger hmmTagger(model, &knownWordHandler, &smoothing);
 
 	string line;
 	while (true)
@@ -83,7 +82,7 @@ int main(int argc, char *argv[])
 		sentence.push_back("<END>");
 
 		// Tag it.
-		vector<string> taggedWords = hmmTagger->tag(sentence);
+		vector<string> taggedWords = hmmTagger.tag(sentence);
 
 		// Print word/tags.
 		for (size_t i = 2; i < sentence.size() - 1; ++i)
