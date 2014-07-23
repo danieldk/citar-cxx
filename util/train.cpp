@@ -58,8 +58,7 @@ public:
 
 void TrainHandler::handleSentence(vector<TaggedWord> const &sentence)
 {
-	for (vector<TaggedWord>::const_iterator iter = sentence.begin();
-		iter != sentence.end(); ++iter)
+	for (auto iter = sentence.begin(); iter != sentence.end(); ++iter)
 	{
 		++(*d_uniGrams)[iter->tag];
 
@@ -97,13 +96,12 @@ inline unordered_map<string, size_t> const &TrainHandler::uniGrams()
 
 void writeLexicon(ostream &out, Lexicon const &lexicon)
 {
-	for (Lexicon::const_iterator iter = lexicon.begin();
-		iter != lexicon.end(); ++iter)
+	for (auto iter = lexicon.begin(); iter != lexicon.end(); ++iter)
 	{
 		out << iter->first;
 
-		for (map<string, size_t>::const_iterator tagIter = iter->second.begin();
-			tagIter != iter->second.end(); ++tagIter)
+		for (auto tagIter = iter->second.begin(); tagIter != iter->second.end();
+        ++tagIter)
 		{
 			out << " " << tagIter->first << " " << tagIter->second;
 		}
@@ -117,19 +115,16 @@ void writeNGrams(ostream &out,
 		unordered_map<string, size_t> const &biGrams,
 		unordered_map<string, size_t> const &triGrams)
 {
-	for (unordered_map<string, size_t>::const_iterator iter = uniGrams.begin();
-			iter != uniGrams.end(); ++iter)
+	for (auto iter = uniGrams.begin(); iter != uniGrams.end(); ++iter)
 		out << iter->first << " " << iter->second << endl;
 
-	for (unordered_map<string, size_t>::const_iterator iter = biGrams.begin();
-			iter != biGrams.end(); ++iter)
+	for (auto iter = biGrams.begin(); iter != biGrams.end(); ++iter)
 	{
 		string biGram = iter->first;
 		out << biGram << " " << iter->second << endl;
 	}
 
-	for (unordered_map<string, size_t>::const_iterator iter = triGrams.begin();
-			iter != triGrams.end(); ++iter)
+	for (auto iter = triGrams.begin(); iter != triGrams.end(); ++iter)
 	{
 		string triGram = iter->first;
 		out << triGram << " " << iter->second << endl;

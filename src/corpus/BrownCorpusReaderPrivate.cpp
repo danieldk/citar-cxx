@@ -30,8 +30,8 @@ void BrownCorpusReaderPrivate::parse(std::istream &in)
 		copy(d_endMarkers.begin(), d_endMarkers.end(), back_inserter(markerSentence));
 
 		// Pass the sentence to all handlers.
-		for (vector<shared_ptr<SentenceHandler> >::iterator iter = d_sentenceHandlers.begin();
-				iter != d_sentenceHandlers.end(); ++iter)
+		for (auto iter = d_sentenceHandlers.begin(); iter != d_sentenceHandlers.end();
+        ++iter)
 			(*iter)->handleSentence(markerSentence);
 	}
 }

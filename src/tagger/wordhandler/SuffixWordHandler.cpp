@@ -23,16 +23,16 @@ SuffixWordHandler::SuffixWordHandler(
 	d_lowerSuffixTree(new WordSuffixTree(model->uniGrams(), maxSuffixLength)),
 	d_maxTags(maxTags)
 {
-	for (WordTagFreqs::const_iterator lexiconIter =
-		model->lexicon().begin(); lexiconIter != model->lexicon().end();
+	for (auto lexiconIter = model->lexicon().begin();
+      lexiconIter != model->lexicon().end();
 		++lexiconIter)
 	{
 		TagFreqs const &tagFreqs = lexiconIter->second;
 
 		// Get the total frequency of the word.
 		size_t wordFreq = 0;
-		for (TagFreqs::const_iterator freqIter =
-				tagFreqs.begin(); freqIter != tagFreqs.end(); ++freqIter)
+		for (auto freqIter = tagFreqs.begin(); freqIter != tagFreqs.end();
+        ++freqIter)
 			wordFreq += freqIter->second;
 
 		string const &word = lexiconIter->first;
@@ -76,7 +76,7 @@ SuffixWordHandler::ProbSet SuffixWordHandler::tags(string const &word) const
 
 	// Get the n most probable tags.
 	ProbSet highestTagProbs;
-	ProbSet::const_iterator iter = allTagProbs.begin();
+	auto iter = allTagProbs.begin();
 	size_t i = 0;
 	while (i < d_maxTags && iter != allTagProbs.end())
 	{

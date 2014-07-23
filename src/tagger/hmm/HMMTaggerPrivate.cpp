@@ -37,21 +37,20 @@ vector<string> HMMTaggerPrivate::tag(vector<string> const &sentence) const
 		WordHandler::ProbSet tagProbs = d_wordHandler->tags(sentence[i]);
 
 		// Loop over all possible tags for the current word.
-		for (WordHandler::ProbSet::const_iterator tagProbsIter = tagProbs.begin();
-			tagProbsIter != tagProbs.end(); ++tagProbsIter)
+		for (auto tagProbsIter = tagProbs.begin(); tagProbsIter != tagProbs.end();
+        ++tagProbsIter)
 		{
 			TagMatrixEntry newEntry(tagProbsIter->first);
 
 			// Loop over all possible trigrams.
-			for (vector<TagMatrixEntry>::const_iterator t2Iter =
-				tagMatrix[i - 1].begin(); t2Iter != tagMatrix[i - 1].end();
-				++t2Iter)
+			for (auto t2Iter = tagMatrix[i - 1].begin();
+          t2Iter != tagMatrix[i - 1].end(); ++t2Iter)
 			{
 				double highestProb = -numeric_limits<double>::infinity();
 				TagMatrixEntry const *highestProbBp = 0;
 
-				for (unordered_map<TagMatrixEntry const *, double>::const_iterator t1Iter =
-					t2Iter->probs.begin(); t1Iter != t2Iter->probs.end(); ++t1Iter)
+				for (auto t1Iter = t2Iter->probs.begin(); t1Iter != t2Iter->probs.end();
+            ++t1Iter)
 				{
 					if (t1Iter->second < beam)
 						continue;
@@ -93,10 +92,9 @@ vector<string> HMMTaggerPrivate::tag(vector<string> const &sentence) const
 
 	vector<TagMatrixEntry> &lastColumn = tagMatrix[sentence.size() - 1];
 
-	for (vector<TagMatrixEntry>::const_iterator iter = lastColumn.begin();
-			iter != lastColumn.end(); ++iter)
-		for (unordered_map<TagMatrixEntry const *, double>::const_iterator probIter =
-			iter->probs.begin(); probIter != iter->probs.end(); ++probIter)
+	for (auto iter = lastColumn.begin(); iter != lastColumn.end(); ++iter)
+		for (auto probIter = iter->probs.begin(); probIter != iter->probs.end();
+        ++probIter)
 		{
 			if (probIter->second > highestProb)
 			{

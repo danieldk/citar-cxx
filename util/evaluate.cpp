@@ -63,8 +63,7 @@ void EvaluateHandler::handleSentence(std::vector<TaggedWord> const &sentence)
 	vector<string> words;
 	vector<string> goldTags;
 
-	for (vector<TaggedWord>::const_iterator wordIter = sentence.begin();
-		wordIter != sentence.end(); ++wordIter)
+	for (auto wordIter = sentence.begin(); wordIter != sentence.end(); ++wordIter)
 	{
 		words.push_back(wordIter->word);
 		goldTags.push_back(wordIter->tag);

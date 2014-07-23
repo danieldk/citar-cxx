@@ -57,8 +57,7 @@ void LinearInterpolationSmoothingPrivate::copy(
 
 void LinearInterpolationSmoothingPrivate::calculateCorpusSize()
 {
-	for (UniGramFreqs::const_iterator iter = d_uniGrams->begin();
-		iter != d_uniGrams->end(); ++iter)
+	for (auto iter = d_uniGrams->begin(); iter != d_uniGrams->end(); ++iter)
 		d_corpusSize += iter->second;
 }
 
@@ -68,14 +67,13 @@ void LinearInterpolationSmoothingPrivate::calculateLambdas()
 	size_t l2f = 0;
 	size_t l3f = 0;
 
-	for (TriGramFreqs::const_iterator iter = d_triGrams->begin();
-		iter != d_triGrams->end(); ++iter)
+	for (auto iter = d_triGrams->begin(); iter != d_triGrams->end(); ++iter)
 	{
 		TriGram t1t2t3(iter->first);
 
 		BiGram t1t2(t1t2t3.t1, t1t2t3.t2);
 		double l3p = 0.0;
-		BiGramFreqs::const_iterator biGramIter = d_biGrams->find(t1t2);
+		auto biGramIter = d_biGrams->find(t1t2);
 		if (biGramIter != d_biGrams->end() && biGramIter->second - 1 != 0)
 			l3p = (iter->second - 1) / (static_cast<double>(biGramIter->second) - 1);
 
@@ -83,7 +81,7 @@ void LinearInterpolationSmoothingPrivate::calculateLambdas()
 		UniGram t2(t1t2t3.t2);
 		double l2p = 0.0;
 		biGramIter = d_biGrams->find(t2t3);
-		UniGramFreqs::const_iterator uniGramIter = d_uniGrams->find(t2);
+		auto uniGramIter = d_uniGrams->find(t2);
 		if (uniGramIter != d_uniGrams->end() && uniGramIter->second - 1 != 0)
 			l2p = (biGramIter->second - 1) / (static_cast<double>(uniGramIter->second) - 1);
 
@@ -111,19 +109,19 @@ double LinearInterpolationSmoothingPrivate::triGramProb(TriGram const &triGram) 
 {
 #ifdef WITH_TRIGRAM_CACHE
 	// If we have cached the likelyhood for this trigram, return it.
-	TriGramProbs::const_iterator triGramCacheIter = d_triGramCache->find(triGram);
+	auto triGramCacheIter = d_triGramCache->find(triGram);
 	if (triGramCacheIter != d_triGramCache->end())
 		return triGramCacheIter->second;
 #endif
 
 	// Unigram likelihood P(t3).
 	UniGram t3(triGram.t3);
-	UniGramFreqs::const_iterator uniGramIter = d_uniGrams->find(t3);
+	auto uniGramIter = d_uniGrams->find(t3);
 	double uniGramProb = uniGramIter->second / static_cast<double>(d_corpusSize);
 
 	// Bigram likelihood P(t3|t2).
 	BiGram t2t3(triGram.t2, triGram.t3);
-	BiGramFreqs::const_iterator biGramIter = d_biGrams->find(t2t3);
+	auto biGramIter = d_biGrams->find(t2t3);
 	UniGram t2(triGram.t2);
 	uniGramIter = d_uniGrams->find(t2);
 	double biGramProb = 0.0;
@@ -132,7 +130,7 @@ double LinearInterpolationSmoothingPrivate::triGramProb(TriGram const &triGram) 
 		biGramProb = biGramIter->second / static_cast<double>(uniGramIter->second);
 
 	// Trigram likelihood P(t3|t1,t2).
-	TriGramFreqs::const_iterator triGramIter = d_triGrams->find(triGram);
+	auto triGramIter = d_triGrams->find(triGram);
 	BiGram t1t2(triGram.t1, triGram.t2);
 	biGramIter = d_biGrams->find(t1t2);
 	double triGramProb = 0.0;

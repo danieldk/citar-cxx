@@ -37,11 +37,11 @@ void KnownWordHandler::copy(KnownWordHandler const &other)
 void KnownWordHandler::calcWordTagProbs(WordTagFreqs const &wordTagFreqs,
 	UniGramFreqs const &uniGramFreqs)
 {
-	for (WordTagFreqs::const_iterator wordIter = wordTagFreqs.begin();
-		wordIter != wordTagFreqs.end(); ++wordIter)
+	for (auto wordIter = wordTagFreqs.begin(); wordIter != wordTagFreqs.end();
+      ++wordIter)
 	{
-		for (std::map<size_t, size_t>::const_iterator tagIter =
-			wordIter->second.begin(); tagIter != wordIter->second.end();
+		for (auto tagIter = wordIter->second.begin();
+        tagIter != wordIter->second.end();
 			++tagIter)
 		{
 			// Calculate the maximum likelihood probability P(w|t).
@@ -56,7 +56,7 @@ KnownWordHandler::ProbSet KnownWordHandler::tags(string const &word) const
 {
 	// Find the maximum likelyhood probabilities, and add them to a set
 	// ordered by decreasing probability.
-	WordTagProbLexicon::const_iterator match = d_lexicon->find(word);
+	auto match = d_lexicon->find(word);
 	if (match != d_lexicon->end())
 	{
 		ProbSet result;
