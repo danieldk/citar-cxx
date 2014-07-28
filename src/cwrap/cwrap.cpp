@@ -2,7 +2,14 @@
 
 extern "C" {
 
-citar_tagger *citar_tagger_new(char const *lexicon, char const *ngrams)
+struct citar_tagger_t {
+  citar::tagger::WordHandler *knownWordHandler;
+  citar::tagger::WordHandler *unknownWordHandler;
+  citar::tagger::Smoothing *smoother;
+  citar::tagger::HMMTagger *tagger;
+};
+
+citar_tagger citar_tagger_new(char const *lexicon, char const *ngrams)
 {
   std::ifstream ngramStream(ngrams);
   if (!ngramStream)
@@ -12,7 +19,7 @@ citar_tagger *citar_tagger_new(char const *lexicon, char const *ngrams)
   if (!lexiconStream)
     return 0;
 
-  citar_tagger *ctagger = new citar_tagger;
+  citar_tagger ctagger = new citar_tagger_t;
 
   try {
     std::shared_ptr<Model> model(Model::readModel(lexiconStream, ngramStream));
@@ -29,7 +36,7 @@ citar_tagger *citar_tagger_new(char const *lexicon, char const *ngrams)
   return ctagger;
 }
 
-void citar_tagger_free(citar_tagger *tagger)
+void citar_tagger_free(citar_tagger tagger)
 {
   delete tagger->tagger;
   delete tagger->smoother;
@@ -38,7 +45,7 @@ void citar_tagger_free(citar_tagger *tagger)
   delete tagger;
 }
 
-char **citar_tagger_tag(citar_tagger *tagger, char const *words[], int len)
+char **citar_tagger_tag(citar_tagger tagger, char const *words[], int len)
 {
   std::vector<std::string> sentence(2, "<START>");
   copy(words, words + len, back_inserter(sentence));
