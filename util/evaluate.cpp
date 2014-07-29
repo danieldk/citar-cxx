@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <citar/corpus/BrownCorpusReader.hh>
+#include <citar/corpus/CONLLCorpusReader.hh>
 #include <citar/corpus/SentenceHandler.hh>
 #include <citar/corpus/TaggedWord.hh>
 #include <citar/tagger/hmm/HMMTagger.hh>
@@ -123,23 +124,23 @@ inline size_t EvaluateHandler::unknownBad()
 
 int main(int argc, char *argv[])
 {
-	if (argc != 4)
+	if (argc != 5)
 	{
-		cerr << "Syntax: " << argv[0] << " lexicon ngrams corpus" << endl;
+		cerr << "Syntax: " << argv[0] << " brown/conll lexicon ngrams corpus" << endl;
 		return 1;
 	}
 
-	ifstream nGramStream(argv[2]);
+	ifstream nGramStream(argv[3]);
 	if (!nGramStream.good())
 	{
-		cerr << "Could not open ngrams: " << argv[2] << endl;
+		cerr << "Could not open ngrams: " << argv[3] << endl;
 		return 1;
 	}
 
-	ifstream lexiconStream(argv[1]);
+	ifstream lexiconStream(argv[2]);
 	if (!lexiconStream.good())
 	{
-		cerr << "Could not open lexicon: " << argv[1] << endl;
+		cerr << "Could not open lexicon: " << argv[2] << endl;
 		return 1;
 	}
 
@@ -154,21 +155,28 @@ int main(int argc, char *argv[])
 	unique_ptr<HMMTagger> hmmTagger(new HMMTagger(model,
 		&knownWordHandler, &smoothing));
 
-	ifstream corpusStream(argv[3]);
+	ifstream corpusStream(argv[4]);
 	if (!corpusStream.good())
 	{
-		cerr << "Could not open corpus: " << argv[3] << endl;
+		cerr << "Could not open corpus: " << argv[4] << endl;
 		return 1;
 	}
 
 	vector<TaggedWord> startTags(2, TaggedWord("<START>", "<START>"));
 	vector<TaggedWord> endTags(1, TaggedWord("<END>", "<END>"));
-	BrownCorpusReader brownCorpusReader(startTags, endTags);
+
+  unique_ptr<CorpusReader> corpusReader;
+  if (argv[1] == std::string("conll"))
+    corpusReader = unique_ptr<CorpusReader>(
+        new CONLLCorpusReader(startTags, endTags, true));
+  else
+    corpusReader = unique_ptr<CorpusReader>(
+        new BrownCorpusReader(startTags, endTags, true));
 
 	shared_ptr<EvaluateHandler> evalHandler(new EvaluateHandler(model, std::move(hmmTagger)));
-	brownCorpusReader.addSentenceHandler(evalHandler);
+	corpusReader->addSentenceHandler(evalHandler);
 
-	brownCorpusReader.parse(corpusStream);
+	corpusReader->parse(corpusStream);
 
 	double knownAccuracy = evalHandler->knownGood() /
 		static_cast<double>(evalHandler->knownGood() + evalHandler->knownBad());

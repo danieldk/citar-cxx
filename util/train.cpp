@@ -28,6 +28,7 @@
 #include <unordered_map>
 
 #include <citar/corpus/BrownCorpusReader.hh>
+#include <citar/corpus/CONLLCorpusReader.hh>
 #include <citar/corpus/SentenceHandler.hh>
 #include <citar/tagger/hmm/Model.hh>
 
@@ -133,39 +134,46 @@ void writeNGrams(ostream &out,
 
 int main(int argc, char *argv[])
 {
-	if (argc != 4)
+	if (argc != 5)
 	{
-		cerr << "Usage: " << argv[0] << " corpus lexicon ngrams" << endl;
+		cerr << "Usage: " << argv[0] << " brown/conll corpus lexicon ngrams" << endl;
 		return 1;
 	}
 
 	vector<TaggedWord> startTags(2, TaggedWord("<START>", "<START>"));
 	vector<TaggedWord> endTags(1, TaggedWord("<END>", "<END>"));
-	BrownCorpusReader brownCorpusReader(startTags, endTags, true);
+
+  unique_ptr<CorpusReader> corpusReader;
+  if (argv[1] == std::string("conll"))
+    corpusReader = unique_ptr<CorpusReader>(
+        new CONLLCorpusReader(startTags, endTags, true));
+  else
+    corpusReader = unique_ptr<CorpusReader>(
+        new BrownCorpusReader(startTags, endTags, true));
 
 	shared_ptr<TrainHandler> trainHandler(new TrainHandler);
-	brownCorpusReader.addSentenceHandler(trainHandler);
+	corpusReader->addSentenceHandler(trainHandler);
 
-	ifstream corpusStream(argv[1]);
+	ifstream corpusStream(argv[2]);
 	if (!corpusStream.good())
 	{
-		cerr << "Could not open corpus for reading: " << argv[1] << endl;
+		cerr << "Could not open corpus for reading: " << argv[2] << endl;
 		return 1;
 	}
 
-	brownCorpusReader.parse(corpusStream);
+	corpusReader->parse(corpusStream);
 
-	ofstream lexiconStream(argv[2]);
+	ofstream lexiconStream(argv[3]);
 	if (!lexiconStream.good())
 	{
-		cerr << "Could not open lexicon for writing: " << argv[2] << endl;
+		cerr << "Could not open lexicon for writing: " << argv[3] << endl;
 		return 1;
 	}
 
-	ofstream ngramStream(argv[3]);
+	ofstream ngramStream(argv[4]);
 	if (!ngramStream.good())
 	{
-		cerr << "Could not open ngram list for writing: " << argv[3] << endl;
+		cerr << "Could not open ngram list for writing: " << argv[4] << endl;
 		return 1;
 	}
 

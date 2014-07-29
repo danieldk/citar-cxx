@@ -29,6 +29,8 @@ include_directories (${CITAR_BINARY_DIR}/include)
 add_library(citar SHARED
   src/corpus/BrownCorpusReader.cpp
   src/corpus/BrownCorpusReaderPrivate.cpp
+  src/corpus/CONLLCorpusReader.cpp
+  src/corpus/CONLLCorpusReaderPrivate.cpp
   src/cwrap/cwrap.cpp
   src/tagger/hmm/HMMTagger.cpp
   src/tagger/hmm/HMMTaggerPrivate.cpp
