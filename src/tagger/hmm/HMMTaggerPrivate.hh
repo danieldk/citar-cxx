@@ -12,7 +12,7 @@
 #include <citar/tagger/hmm/Model.hh>
 #include <citar/tagger/hmm/Smoothing.hh>
 
-#include "TagMatrixEntry.hh"
+#include "TrellisEntry.hh"
 
 namespace citar {
 namespace tagger {

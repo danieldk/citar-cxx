@@ -8,7 +8,7 @@
 #include <citar/tagger/wordhandler/WordHandler.hh>
 
 #include "HMMTaggerPrivate.hh"
-#include "TagMatrixEntry.hh"
+#include "TrellisEntry.hh"
 
 
 using namespace std;
@@ -16,17 +16,17 @@ using namespace citar::tagger;
 
 vector<string> HMMTaggerPrivate::tag(vector<string> const &sentence) const
 {
-	vector<vector<TagMatrixEntry> > tagMatrix(sentence.size(), vector<TagMatrixEntry>());
+	vector<vector<TrellisEntry> > trellis(sentence.size(), vector<TrellisEntry>());
 
 	// We can't estimate the trigram probabilities for the first two tags,
-	// so add them to the tag matrix as-is. Normally, these are start markers
+	// so add them to the trellis as-is. Normally, these are start markers
 	// anyway. XXX - maybe we should at the very least look them up in the
 	// lexicon?
 	size_t startTag = d_model->tagNumbers().find(sentence[0])->second;
-	tagMatrix[0].push_back(TagMatrixEntry(startTag));
-	tagMatrix[1].push_back(TagMatrixEntry(startTag));
-	tagMatrix[1][0].probs[&tagMatrix[0][0]] = 0.0;
-	tagMatrix[1][0].bps[&tagMatrix[0][0]] = 0;
+	trellis[0].push_back(TrellisEntry(startTag));
+	trellis[1].push_back(TrellisEntry(startTag));
+	trellis[1][0].probs[&trellis[0][0]] = 0.0;
+	trellis[1][0].bps[&trellis[0][0]] = 0;
 
 	double beam = 0.0;
 
@@ -40,14 +40,14 @@ vector<string> HMMTaggerPrivate::tag(vector<string> const &sentence) const
 		for (auto tagProbsIter = tagProbs.begin(); tagProbsIter != tagProbs.end();
         ++tagProbsIter)
 		{
-			TagMatrixEntry newEntry(tagProbsIter->first);
+			TrellisEntry newEntry(tagProbsIter->first);
 
 			// Loop over all possible trigrams.
-			for (auto t2Iter = tagMatrix[i - 1].begin();
-          t2Iter != tagMatrix[i - 1].end(); ++t2Iter)
+			for (auto t2Iter = trellis[i - 1].begin();
+          t2Iter != trellis[i - 1].end(); ++t2Iter)
 			{
 				double highestProb = -numeric_limits<double>::infinity();
-				TagMatrixEntry const *highestProbBp = 0;
+				TrellisEntry const *highestProbBp = 0;
 
 				for (auto t1Iter = t2Iter->probs.begin(); t1Iter != t2Iter->probs.end();
             ++t1Iter)
@@ -79,7 +79,7 @@ vector<string> HMMTaggerPrivate::tag(vector<string> const &sentence) const
 			}
 
 
-			tagMatrix[i].push_back(newEntry);
+			trellis[i].push_back(newEntry);
 		}
 
 		beam = columnHighestProb - d_beamFactor;
@@ -87,10 +87,10 @@ vector<string> HMMTaggerPrivate::tag(vector<string> const &sentence) const
 
 	// Find the most probable final state.
 	double highestProb = -numeric_limits<double>::infinity();
-	TagMatrixEntry const *tail = 0;
-	TagMatrixEntry const *beforeTail = 0;
+	TrellisEntry const *tail = 0;
+	TrellisEntry const *beforeTail = 0;
 
-	vector<TagMatrixEntry> &lastColumn = tagMatrix[sentence.size() - 1];
+	vector<TrellisEntry> &lastColumn = trellis[sentence.size() - 1];
 
 	for (auto iter = lastColumn.begin(); iter != lastColumn.end(); ++iter)
 		for (auto probIter = iter->probs.begin(); probIter != iter->probs.end();
@@ -106,14 +106,14 @@ vector<string> HMMTaggerPrivate::tag(vector<string> const &sentence) const
 
 	// Extract the most probable tag sequence.
 	vector<string> tagSequence;
-	for (int i = tagMatrix.size() - 1; i >= 0; --i)
+	for (int i = trellis.size() - 1; i >= 0; --i)
 	{
 		string tagString = d_model->numberTags().find(tail->tag)->second;
 		tagSequence.push_back(tagString);
 
 		if (beforeTail)
 		{
-			TagMatrixEntry const *tmp = tail->bps.find(beforeTail)->second;
+			TrellisEntry const *tmp = tail->bps.find(beforeTail)->second;
 			tail = beforeTail;
 			beforeTail = tmp;
 		}

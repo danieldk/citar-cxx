@@ -17,8 +17,8 @@
  * along with Citar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LANGKIT_TAGGER_TAGMATRIXENTRY
-#define LANGKIT_TAGGER_TAGMATRIXENTRY
+#ifndef CITAR_TRELLIS_ENTRY
+#define CITAR_TRELLIS_ENTRY
 
 #include <string>
 
@@ -27,14 +27,14 @@
 namespace citar {
 namespace tagger {
 
-struct TagMatrixEntry {
-	TagMatrixEntry(size_t const &newTag) : tag(newTag) {}
+struct TrellisEntry {
+	TrellisEntry(size_t const &newTag) : tag(newTag) {}
 	size_t tag;
-	std::unordered_map<TagMatrixEntry const *, double> probs;
-	std::unordered_map<TagMatrixEntry const *, TagMatrixEntry const *> bps;
+	std::unordered_map<TrellisEntry const *, double> probs;
+	std::unordered_map<TrellisEntry const *, TrellisEntry const *> bps;
 };
 
 }
 }
 
-#endif // LANGKIT_TAGGER_TAGMATRIXENTRY
+#endif // CITAR_TRELLIS_ENTRY
