@@ -28,7 +28,7 @@
 #include <unordered_map>
 
 #include <citar/tagger/hmm/UniGram.hh>
-#include <citar/utility/PairSecondGtComp.hh>
+#include <citar/util/PairSecondGtComp.hh>
 
 namespace citar {
 namespace tagger {
@@ -37,7 +37,7 @@ class WordHandler
 {
 public:
 	typedef std::set<std::pair<size_t, double>,
-		citar::utility::PairSecondGtComp<std::pair<size_t, double> > >
+		citar::util::PairSecondGtComp<std::pair<size_t, double> > >
 		ProbSet;
 	typedef std::map<size_t, size_t> TagFreqs;
 	virtual ProbSet tags(std::string const &word) const = 0;

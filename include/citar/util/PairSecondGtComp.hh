@@ -17,11 +17,11 @@
  * along with Citar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LANGKIT_UTILITY_PAIRSECONDGTCOMP_HH
-#define LANGKIT_UTILITY_PAIRSECONDGTCOMP_HH
+#ifndef CITAR_UTIL_PAIRSECONDGTCOMP_HH
+#define CITAR_UTIL_PAIRSECONDGTCOMP_HH
 
 namespace citar {
-namespace utility {
+namespace util {
 
 // This function object class compares two pairs, and returns true when
 // the second member of the first pair is greater than the second member
@@ -45,5 +45,5 @@ bool PairSecondGtComp<T>::operator()(T const &p1, T const &p2)
 }
 }
 
-#endif // LANGKIT_UTILITY_PAIRSECONDGTCOMP_HH
+#endif // CITAR_UTIL_PAIRSECONDGTCOMP_HH
 
