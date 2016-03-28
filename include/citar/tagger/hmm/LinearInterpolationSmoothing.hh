@@ -29,7 +29,7 @@
 
 #include "BiGram.hh"
 #include "Model.hh"
-#include "Smoothing.hh"
+#include "LanguageModel.hh"
 #include "TriGram.hh"
 #include "UniGram.hh"
 
@@ -42,7 +42,7 @@ class LinearInterpolationSmoothingPrivate;
  * A class that calculates trigram probabilities using Linear interpolation
  * smoothing.
  */
-class LinearInterpolationSmoothing : public Smoothing
+class LinearInterpolationSmoothing : public LanguageModel
 {
 public:
 	typedef std::unordered_map<TriGram, double, TriGramHash> TriGramProbs;

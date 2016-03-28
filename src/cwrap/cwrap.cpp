@@ -5,7 +5,7 @@ extern "C" {
 struct citar_tagger_t {
   citar::tagger::WordHandler *knownWordHandler;
   citar::tagger::WordHandler *unknownWordHandler;
-  citar::tagger::Smoothing *smoother;
+  citar::tagger::LanguageModel *languageModel;
   citar::tagger::HMMTagger *tagger;
 };
 
@@ -26,9 +26,9 @@ citar_tagger citar_tagger_new(char const *lexicon, char const *ngrams)
     ctagger->unknownWordHandler = new SuffixWordHandler(model, 2, 2, 8);
     ctagger->knownWordHandler =
       new KnownWordHandler(model, ctagger->unknownWordHandler);
-    ctagger->smoother = new LinearInterpolationSmoothing(model);
+    ctagger->languageModel = new LinearInterpolationSmoothing(model);
     ctagger->tagger =
-      new HMMTagger(model, ctagger->knownWordHandler, ctagger->smoother);
+      new HMMTagger(model, ctagger->knownWordHandler, ctagger->languageModel);
   } catch (...) {
     return 0;
   }
@@ -39,7 +39,7 @@ citar_tagger citar_tagger_new(char const *lexicon, char const *ngrams)
 void citar_tagger_free(citar_tagger tagger)
 {
   delete tagger->tagger;
-  delete tagger->smoother;
+  delete tagger->languageModel;
   delete tagger->knownWordHandler;
   delete tagger->unknownWordHandler;
   delete tagger;

@@ -8,11 +8,11 @@
 namespace citar {
 namespace tagger {
 
-class Smoothing : public citar::util::NonCopyable
+class LanguageModel : public citar::util::NonCopyable
 {
 public:
 	virtual double triGramProb(TriGram const &triGram) const = 0;
-	virtual ~Smoothing() {}
+	virtual ~LanguageModel() {}
 };
 
 }

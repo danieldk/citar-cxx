@@ -30,7 +30,7 @@
 
 #include <citar/tagger/hmm/BiGram.hh>
 #include <citar/tagger/hmm/Model.hh>
-#include <citar/tagger/hmm/Smoothing.hh>
+#include <citar/tagger/hmm/LanguageModel.hh>
 #include <citar/tagger/hmm/TriGram.hh>
 #include <citar/tagger/hmm/UniGram.hh>
 
@@ -41,7 +41,7 @@ namespace tagger {
  * A class that calculates trigram probabilities using Linear interpolation
  * smoothing.
  */
-class LinearInterpolationSmoothingPrivate : public Smoothing
+class LinearInterpolationSmoothingPrivate : public LanguageModel
 {
 public:
 	typedef std::unordered_map<TriGram, double, TriGramHash> TriGramProbs;

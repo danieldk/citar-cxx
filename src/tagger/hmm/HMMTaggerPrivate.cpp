@@ -60,7 +60,7 @@ vector<string> HMMTaggerPrivate::tag(vector<string> sentence) const
 						continue;
 
 					TriGram curTriGram(t1Iter->first->tag, t2Iter->tag, tagProbsIter->first);
-					double triGramProb = d_smoothing->triGramProb(curTriGram);
+					double triGramProb = d_languageModel->triGramProb(curTriGram);
 
 					// The probability of the current state is P(w|t) * p(t3|t1,t2) *
 					// p(prev_state).

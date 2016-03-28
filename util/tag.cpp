@@ -64,9 +64,9 @@ int main(int argc, char *argv[])
 
 	KnownWordHandler knownWordHandler(model, &suffixWordHandler);
 
-	LinearInterpolationSmoothing smoothing(model);
+	LinearInterpolationSmoothing languageModel(model);
 
-	HMMTagger hmmTagger(model, &knownWordHandler, &smoothing);
+	HMMTagger hmmTagger(model, &knownWordHandler, &languageModel);
 
 	string line;
 	while (true)

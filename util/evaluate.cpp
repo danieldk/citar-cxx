@@ -149,10 +149,10 @@ int main(int argc, char *argv[])
 
 	KnownWordHandler knownWordHandler(model, &suffixWordHandler);
 
-	LinearInterpolationSmoothing smoothing(model);
+	LinearInterpolationSmoothing languageModel(model);
 
 	unique_ptr<HMMTagger> hmmTagger(new HMMTagger(model,
-		&knownWordHandler, &smoothing));
+		&knownWordHandler, &languageModel));
 
 	ifstream corpusStream(argv[3]);
 	if (!corpusStream.good())

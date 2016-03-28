@@ -10,8 +10,8 @@
 using namespace citar::tagger;
 
 HMMTagger::HMMTagger(std::shared_ptr<Model> model, WordHandler const *wordHandler,
-	Smoothing const *smoothing, double beamFactor)
-	: d_private(new HMMTaggerPrivate(model, wordHandler, smoothing, beamFactor))
+	LanguageModel const *languageModel, double beamFactor)
+	: d_private(new HMMTaggerPrivate(model, wordHandler, languageModel, beamFactor))
 {}
 
 HMMTagger::~HMMTagger()

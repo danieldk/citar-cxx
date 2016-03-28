@@ -36,7 +36,7 @@ set(LIBCITAR_HEADERS
         include/citar/tagger/hmm/HMMTagger.hh
         include/citar/tagger/hmm/LinearInterpolationSmoothing.hh
         include/citar/tagger/hmm/Model.hh
-        include/citar/tagger/hmm/Smoothing.hh
+        include/citar/tagger/hmm/LanguageModel.hh
         include/citar/tagger/hmm/TriGram.hh
         include/citar/tagger/hmm/UniGram.hh
 

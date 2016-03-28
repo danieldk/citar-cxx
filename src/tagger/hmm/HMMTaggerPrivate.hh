@@ -10,7 +10,7 @@
 
 #include <citar/tagger/wordhandler/WordHandler.hh>
 #include <citar/tagger/hmm/Model.hh>
-#include <citar/tagger/hmm/Smoothing.hh>
+#include <citar/tagger/hmm/LanguageModel.hh>
 
 #include "TrellisEntry.hh"
 
@@ -24,10 +24,10 @@ class HMMTaggerPrivate
 {
 public:
 	HMMTaggerPrivate(std::shared_ptr<Model> model, WordHandler const *wordHandler,
-		Smoothing const *smoothing,
+		LanguageModel const *languageModel,
 		double beamFactor = 1000.0)
 	:
-		d_model(model), d_wordHandler(wordHandler), d_smoothing(smoothing),
+		d_model(model), d_wordHandler(wordHandler), d_languageModel(languageModel),
 		d_beamFactor(log(beamFactor)) {}
 
 	/**
@@ -41,7 +41,7 @@ public:
 private:
 	std::shared_ptr<Model> d_model;
 	WordHandler const *d_wordHandler;
-	Smoothing const *d_smoothing;
+	LanguageModel const *d_languageModel;
 	double d_beamFactor;
 };
 

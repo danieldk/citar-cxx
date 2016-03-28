@@ -14,7 +14,7 @@ namespace tagger {
 class HMMTaggerPrivate;
 class Model;
 class WordHandler;
-class Smoothing;
+class LanguageModel;
 
 /**
  * This class implements a Hidden Markov Model (HMM) trigram tagger.
@@ -23,7 +23,7 @@ class HMMTagger : citar::util::NonCopyable
 {
 public:
 	HMMTagger(std::shared_ptr<Model> model, WordHandler const *wordHandler,
-		Smoothing const *smoothing,
+		LanguageModel const *languageModel,
 		double beamFactor = 1000.0);
 	~HMMTagger();
 
