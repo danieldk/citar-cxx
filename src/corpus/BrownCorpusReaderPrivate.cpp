@@ -8,48 +8,44 @@
 
 #include <memory>
 
+#include <boost/optional.hpp>
+
 #include "BrownCorpusReaderPrivate.hh"
 
-using namespace std;
 using namespace citar::corpus;
 
-void BrownCorpusReaderPrivate::parse(std::istream &in)
+boost::optional<std::vector<TaggedWord>> BrownCorpusReaderPrivate::nextSentence()
 {
-	string line;
-	while (getline(in, line)) {
+	std::string line;
+	while (getline(*d_is, line)) {
+		if (!*d_is)
+			return boost::none;
+
+
 		if (line.empty() || line.size() == 0)
 			continue;
 
-		vector<TaggedWord> sentence = parseLine(line);
-		if (d_decapitalizeFirstWord)
-			sentence[0].word[0] = tolower(sentence[0].word[0]);
-
-		// Build a sentence with markers.
-		vector<TaggedWord> markerSentence(d_startMarkers);
-		copy(sentence.begin(), sentence.end(), back_inserter(markerSentence));
-		copy(d_endMarkers.begin(), d_endMarkers.end(), back_inserter(markerSentence));
-
-		// Pass the sentence to all handlers.
-		for (auto iter = d_sentenceHandlers.begin(); iter != d_sentenceHandlers.end();
-        ++iter)
-			(*iter)->handleSentence(markerSentence);
+		return parseLine(line);
 	}
+
+	// We shouldn't end up here.
+	return boost::none;
 }
 
-vector<TaggedWord> BrownCorpusReaderPrivate::parseLine(std::string const &line) const
+std::vector<TaggedWord> BrownCorpusReaderPrivate::parseLine(std::string const &line) const
 {
-	vector<TaggedWord> sentence;
+	std::vector<TaggedWord> sentence;
 
-	istringstream lineStream(line);
-	for (istream_iterator<string> iter(lineStream);
-		iter != istream_iterator<string>(); ++iter)
+	std::istringstream lineStream(line);
+	for (std::istream_iterator<std::string> iter(lineStream);
+		iter != std::istream_iterator<std::string>(); ++iter)
 	{
-		string wordTag = *iter;
+		std::string wordTag = *iter;
 
 		// Find the word/tag delimiter within the word/tag combination.
 		// Characters before the separator denote the word, characters
 		// after the separator denote the tag.
-		string::size_type sepIndex = wordTag.rfind("/");
+		std::string::size_type sepIndex = wordTag.rfind("/");
 		TaggedWord taggedWord(wordTag.substr(0, sepIndex),
 			wordTag.substr(sepIndex + 1));
 		sentence.push_back(taggedWord);

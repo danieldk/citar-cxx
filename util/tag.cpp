@@ -22,6 +22,7 @@
 #include <iostream>
 #include <iterator>
 #include <sstream>
+#include <string>
 #include <vector>
 
 #include <citar/corpus/TaggedWord.hh>
@@ -75,17 +76,14 @@ int main(int argc, char *argv[])
 
 		istringstream lineStream(line);
 
-		// Get the sequence of words, adding start/end markers.
-		vector<string> sentence(2, "<START>");
-		copy(istream_iterator<string>(lineStream), istream_iterator<string>(),
-			back_inserter(sentence));
-		sentence.push_back("<END>");
+		// Get the sequence of words.
+		vector<string> sentence{istream_iterator<string>(lineStream), istream_iterator<string>()};
 
 		// Tag it.
 		vector<string> taggedWords = hmmTagger.tag(sentence);
 
 		// Print word/tags.
-		for (size_t i = 2; i < sentence.size() - 1; ++i)
+		for (size_t i = 0; i < sentence.size(); ++i)
 			cout << sentence[i] << "/" << taggedWords[i] << " ";
 
 		cout << endl;

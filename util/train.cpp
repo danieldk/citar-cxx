@@ -1,5 +1,5 @@
 /*
- * Copyright 2008, 2014 Daniel de Kok
+ * Copyright 2008, 2016 Daniel de Kok
  *
  * This file is part of citar.
  *
@@ -30,21 +30,23 @@
 #include <citar/corpus/BrownCorpusReader.hh>
 #include <citar/corpus/SentenceHandler.hh>
 #include <citar/tagger/hmm/Model.hh>
+#include <citar/util/Markers.hh>
 
 using namespace std;
+using namespace citar;
 using namespace citar::corpus;
 using namespace citar::tagger;
 
 typedef std::unordered_map<string, map<string, size_t> > Lexicon;
 
-class TrainHandler : public SentenceHandler
+class Trainer
 {
 public:
-	TrainHandler() : d_lexicon(new Lexicon),
+	Trainer() : d_lexicon(new Lexicon),
 		d_uniGrams(new unordered_map<string, size_t>),
 		d_biGrams(new unordered_map<string, size_t>),
 		d_triGrams(new unordered_map<string, size_t>) {}
-	void handleSentence(vector<TaggedWord> const &sentence);
+	void handleSentence(vector<TaggedWord> sentence);
 	Lexicon const &lexicon();
 	unordered_map<string, size_t> const &biGrams();
 	unordered_map<string, size_t> const &triGrams();
@@ -56,8 +58,11 @@ public:
 	unique_ptr<unordered_map<string, size_t> > d_triGrams;
 };
 
-void TrainHandler::handleSentence(vector<TaggedWord> const &sentence)
+void Trainer::handleSentence(vector<TaggedWord> sentence)
 {
+	sentence.insert(sentence.begin(), citar::START_MARKERS_TAGGED.begin(), citar::START_MARKERS_TAGGED.end());
+	sentence.insert(sentence.end(), citar::END_MARKERS_TAGGED.begin(), citar::END_MARKERS_TAGGED.end());
+
 	for (auto iter = sentence.begin(); iter != sentence.end(); ++iter)
 	{
 		++(*d_uniGrams)[iter->tag];
@@ -74,22 +79,22 @@ void TrainHandler::handleSentence(vector<TaggedWord> const &sentence)
 	}
 }
 
-inline Lexicon const &TrainHandler::lexicon()
+inline Lexicon const &Trainer::lexicon()
 {
 	return *d_lexicon;
 }
 
-inline unordered_map<string, size_t> const &TrainHandler::biGrams()
+inline unordered_map<string, size_t> const &Trainer::biGrams()
 {
 	return *d_biGrams;
 }
 
-inline unordered_map<string, size_t> const &TrainHandler::triGrams()
+inline unordered_map<string, size_t> const &Trainer::triGrams()
 {
 	return *d_triGrams;
 }
 
-inline unordered_map<string, size_t> const &TrainHandler::uniGrams()
+inline unordered_map<string, size_t> const &Trainer::uniGrams()
 {
 	return *d_uniGrams;
 }
@@ -141,10 +146,6 @@ int main(int argc, char *argv[])
 
 	vector<TaggedWord> startTags(2, TaggedWord("<START>", "<START>"));
 	vector<TaggedWord> endTags(1, TaggedWord("<END>", "<END>"));
-	BrownCorpusReader brownCorpusReader(startTags, endTags, true);
-
-	shared_ptr<TrainHandler> trainHandler(new TrainHandler);
-	brownCorpusReader.addSentenceHandler(trainHandler);
 
 	ifstream corpusStream(argv[1]);
 	if (!corpusStream.good())
@@ -153,7 +154,17 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	brownCorpusReader.parse(corpusStream);
+	BrownCorpusReader brownCorpusReader(&corpusStream);
+
+	Trainer trainHandler;
+
+	while (true) {
+		auto sentence = brownCorpusReader.nextSentence();
+		if (!sentence)
+			break;
+
+		trainHandler.handleSentence(sentence.value());
+	}
 
 	ofstream lexiconStream(argv[2]);
 	if (!lexiconStream.good())
@@ -170,8 +181,7 @@ int main(int argc, char *argv[])
 	}
 
 
-	writeLexicon(lexiconStream, trainHandler->lexicon());
-
-	writeNGrams(ngramStream, trainHandler->uniGrams(), trainHandler->biGrams(),
-		trainHandler->triGrams());
+	writeLexicon(lexiconStream, trainHandler.lexicon());
+	writeNGrams(ngramStream, trainHandler.uniGrams(), trainHandler.biGrams(),
+		trainHandler.triGrams());
 }

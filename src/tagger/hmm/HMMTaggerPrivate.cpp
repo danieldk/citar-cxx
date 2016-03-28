@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 #include <citar/tagger/wordhandler/WordHandler.hh>
+#include <citar/util/Markers.hh>
 
 #include "HMMTaggerPrivate.hh"
 #include "TrellisEntry.hh"
@@ -14,8 +15,11 @@
 using namespace std;
 using namespace citar::tagger;
 
-vector<string> HMMTaggerPrivate::tag(vector<string> const &sentence) const
+vector<string> HMMTaggerPrivate::tag(vector<string> sentence) const
 {
+	sentence.insert(sentence.begin(), citar::START_MARKERS.begin(), citar::START_MARKERS.end());
+	sentence.insert(sentence.end(), citar::END_MARKERS.begin(), citar::END_MARKERS.end());
+
 	vector<vector<TrellisEntry> > trellis(sentence.size(), vector<TrellisEntry>());
 
 	// We can't estimate the trigram probabilities for the first two tags,
@@ -122,6 +126,10 @@ vector<string> HMMTaggerPrivate::tag(vector<string> const &sentence) const
 	// Since we have extracted the most probable tag sequence from tail to
 	// head, we have to reverse it.
 	reverse(tagSequence.begin(), tagSequence.end());
+
+	// And remove the start/end markers.
+	tagSequence.erase(tagSequence.begin(), tagSequence.begin() + citar::START_MARKERS.size());
+	tagSequence.erase(tagSequence.end() - citar::END_MARKERS.size(), tagSequence.end());
 
 	return tagSequence;
 }

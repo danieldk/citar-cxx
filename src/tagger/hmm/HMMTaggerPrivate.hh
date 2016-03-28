@@ -36,7 +36,7 @@ public:
 	 * by two start markers ended by one end marker. The start markers
 	 * should have identical words and tags.
 	 */
-	std::vector<std::string> tag(std::vector<std::string> const &sentence)
+	std::vector<std::string> tag(std::vector<std::string> sentence)
 		const;
 private:
 	std::shared_ptr<Model> d_model;

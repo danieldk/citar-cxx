@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Daniel de Kok
+ * Copyright 2008, 2016 Daniël de Kok
  *
  * This file is part of citar.
  *
@@ -25,6 +25,8 @@
 
 #include <memory>
 
+#include <boost/optional.hpp>
+
 #include <citar/util/NonCopyable.hh>
 #include <citar/corpus/SentenceHandler.hh>
 #include <citar/corpus/TaggedWord.hh>
@@ -33,23 +35,15 @@ namespace citar {
 namespace corpus {
 
 /**
- * Base class for corpus handlers. Derived classes should use the protected
- * <i>d_startMarkers</i> and <i>d_endMarkers</i> fields to add start/end
- * markers to sentences.
+ * Base class for corpus handlers.
  */
 class CorpusReader : public citar::util::NonCopyable
 {
 public:
 	/**
-	 * Register a sentence handler class.
+	 * Read a sentence. The value is absent if the end of file is reached.
 	 */
-	virtual void addSentenceHandler(std::shared_ptr<SentenceHandler> sentenceHandler) = 0;
-
-	/**
-	 * Parse a corpus. The registered sentence handlers will be called to handle
-	 * each parsed sentence.
-	 */
-	virtual void parse(std::istream &in) = 0;
+	virtual boost::optional<std::vector<TaggedWord>> nextSentence() = 0;
 
 	virtual ~CorpusReader() {}
 protected:

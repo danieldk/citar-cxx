@@ -1,6 +1,7 @@
 #ifndef CITAR_BROWNCORPUSREADER_HH
 #define CITAR_BROWNCORPUSREADER_HH
 
+#include <iosfwd>
 #include <istream>
 #include <string>
 #include <vector>
@@ -16,12 +17,9 @@ class BrownCorpusReaderPrivate;
 class BrownCorpusReader : public CorpusReader
 {
 public:
-	BrownCorpusReader(std::vector<TaggedWord> const &startMarkers,
-			std::vector<TaggedWord> const &endMarkers,
-			bool decapitalizeFirstWord = false);
+	BrownCorpusReader(std::istream *is);
 	~BrownCorpusReader();
-	void addSentenceHandler(std::shared_ptr<SentenceHandler> sentenceHandler);
-	void parse(std::istream &in);
+	virtual boost::optional<std::vector<TaggedWord>> nextSentence();
 private:
 	BrownCorpusReaderPrivate *d_private;
 };

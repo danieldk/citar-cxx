@@ -1,5 +1,5 @@
 /*
- * Copyright 2008, 2014 Daniel de Kok
+ * Copyright 2008, 2016 Daniel de Kok
  *
  * This file is part of citar.
  *
@@ -37,10 +37,10 @@ using namespace std;
 using namespace citar::corpus;
 using namespace citar::tagger;
 
-class EvaluateHandler : public SentenceHandler
+class Evaluator : public SentenceHandler
 {
 public:
-	EvaluateHandler(shared_ptr<Model> model,
+	Evaluator(shared_ptr<Model> model,
 		unique_ptr<HMMTagger> hmmTagger) :
 		d_model(model), d_hmmTagger(std::move(hmmTagger)),
 		d_knownGood(0), d_knownBad(0), d_unknownGood(0), d_unknownBad(0) {}
@@ -58,7 +58,7 @@ private:
 	size_t d_unknownBad;
 };
 
-void EvaluateHandler::handleSentence(std::vector<TaggedWord> const &sentence)
+void Evaluator::handleSentence(std::vector<TaggedWord> const &sentence)
 {
 	vector<string> words;
 	vector<string> goldTags;
@@ -101,22 +101,22 @@ void EvaluateHandler::handleSentence(std::vector<TaggedWord> const &sentence)
 	}
 }
 
-inline size_t EvaluateHandler::knownGood()
+inline size_t Evaluator::knownGood()
 {
 	return d_knownGood;
 }
 
-inline size_t EvaluateHandler::knownBad()
+inline size_t Evaluator::knownBad()
 {
 	return d_knownBad;
 }
 
-inline size_t EvaluateHandler::unknownGood()
+inline size_t Evaluator::unknownGood()
 {
 	return d_unknownGood;
 }
 
-inline size_t EvaluateHandler::unknownBad()
+inline size_t Evaluator::unknownBad()
 {
 	return d_unknownBad;
 }
@@ -161,21 +161,24 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	vector<TaggedWord> startTags(2, TaggedWord("<START>", "<START>"));
-	vector<TaggedWord> endTags(1, TaggedWord("<END>", "<END>"));
-	BrownCorpusReader brownCorpusReader(startTags, endTags);
+	BrownCorpusReader brownCorpusReader(&corpusStream);
 
-	shared_ptr<EvaluateHandler> evalHandler(new EvaluateHandler(model, std::move(hmmTagger)));
-	brownCorpusReader.addSentenceHandler(evalHandler);
+	Evaluator evalHandler(model, std::move(hmmTagger));
 
-	brownCorpusReader.parse(corpusStream);
+	while (true) {
+		auto sentence = brownCorpusReader.nextSentence();
+		if (!sentence)
+			break;
 
-	double knownAccuracy = evalHandler->knownGood() /
-		static_cast<double>(evalHandler->knownGood() + evalHandler->knownBad());
-	double unknownAccuracy = evalHandler->unknownGood() /
-		static_cast<double>(evalHandler->unknownGood() + evalHandler->unknownBad());
-	double overallAccuracy = (evalHandler->knownGood() + evalHandler->unknownGood()) /
-		static_cast<float>(evalHandler->knownGood() + evalHandler->knownBad() + evalHandler->unknownGood() + evalHandler->unknownBad());
+		evalHandler.handleSentence(sentence.value());
+	}
+
+	double knownAccuracy = evalHandler.knownGood() /
+		static_cast<double>(evalHandler.knownGood() + evalHandler.knownBad());
+	double unknownAccuracy = evalHandler.unknownGood() /
+		static_cast<double>(evalHandler.unknownGood() + evalHandler.unknownBad());
+	double overallAccuracy = (evalHandler.knownGood() + evalHandler.unknownGood()) /
+		static_cast<float>(evalHandler.knownGood() + evalHandler.knownBad() + evalHandler.unknownGood() + evalHandler.unknownBad());
 
 	cout << "Accuracy (known): " <<  knownAccuracy << endl;
 	cout << "Accuracy (unknown): " << unknownAccuracy << endl;
