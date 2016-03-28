@@ -26,6 +26,8 @@
 #include <functional>
 #include <unordered_map>
 
+#include <boost/functional/hash.hpp>
+
 namespace citar {
 namespace tagger {
 
@@ -58,10 +60,9 @@ struct TriGramHash : public std::unary_function<TriGram, std::size_t>
 	std::size_t operator()(TriGram const &triGram) const
 	{
 		std::hash<size_t> numHash;
-		int seed = numHash(triGram.t1);
-		seed ^= numHash(triGram.t2) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-		seed ^= numHash(triGram.t3) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-
+		size_t seed = numHash(triGram.t1);
+		boost::hash_combine(seed, triGram.t2);
+		boost::hash_combine(seed, triGram.t3);
 		return seed;
 	}
 };

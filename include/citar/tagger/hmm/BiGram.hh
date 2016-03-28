@@ -26,6 +26,8 @@
 #include <functional>
 #include <unordered_map>
 
+#include <boost/functional/hash.hpp>
+
 namespace citar {
 namespace tagger {
 
@@ -55,9 +57,8 @@ struct BiGramHash : public std::unary_function<BiGram, std::size_t>
 	std::size_t operator()(BiGram const &biGram) const
 	{
 		std::hash<size_t> numHash;
-		int seed = numHash(biGram.t1);
-		seed ^= numHash(biGram.t2) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-
+		size_t seed = numHash(biGram.t1);
+		boost::hash_combine(seed, biGram.t2);
 		return seed;
 	}
 };
